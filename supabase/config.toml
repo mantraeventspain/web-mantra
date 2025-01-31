@@ -1,0 +1,15 @@
+[auth]
+enabled = true
+
+[functions]
+[functions.deploy]
+enabled = true
+
+[realtime]
+enabled = true
+
+[storage]
+enabled = true
+
+[db]
+port = 54322

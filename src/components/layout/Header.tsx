@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, ShoppingCart, Music } from 'lucide-react';
+import React from "react";
+import { Link } from "react-router-dom";
+import { Menu, ShoppingCart, Music } from "lucide-react";
 
 export const Header = () => {
   return (
@@ -11,16 +11,22 @@ export const Header = () => {
             <Music className="w-8 h-8 text-white" />
             <span className="text-xl font-bold text-white">TechnoEvents</span>
           </Link>
-          
+
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/events" className="text-white hover:text-purple-400">Eventos</Link>
-            <Link to="/shop" className="text-white hover:text-purple-400">Tienda</Link>
-            <Link to="/gallery" className="text-white hover:text-purple-400">Galería</Link>
+            <Link to="/events" className="text-white hover:text-purple-400">
+              Eventos
+            </Link>
+            <Link to="/shop" className="text-white hover:text-purple-400">
+              Tienda
+            </Link>
+            <Link to="/gallery" className="text-white hover:text-purple-400">
+              Galería
+            </Link>
             <Link to="/cart" className="text-white hover:text-purple-400">
               <ShoppingCart className="w-6 h-6" />
             </Link>
           </div>
-          
+
           <button className="md:hidden text-white">
             <Menu className="w-6 h-6" />
           </button>

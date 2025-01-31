@@ -1,5 +1,4 @@
-import React from 'react';
-import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { Facebook, Instagram } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -12,34 +11,58 @@ export const Footer = () => {
               Creando experiencias únicas en la escena techno.
             </p>
           </div>
-          
+
           <div>
             <h4 className="text-lg font-semibold mb-4">Enlaces</h4>
             <ul className="space-y-2">
-              <li><a href="/events" className="text-gray-400 hover:text-white">Eventos</a></li>
-              <li><a href="/shop" className="text-gray-400 hover:text-white">Tienda</a></li>
-              <li><a href="/contact" className="text-gray-400 hover:text-white">Contacto</a></li>
+              <li>
+                <a href="/events" className="text-gray-400 hover:text-white">
+                  Eventos
+                </a>
+              </li>
+              <li>
+                <a href="/shop" className="text-gray-400 hover:text-white">
+                  Tienda
+                </a>
+              </li>
+              <li>
+                <a href="/contact" className="text-gray-400 hover:text-white">
+                  Contacto
+                </a>
+              </li>
             </ul>
           </div>
-          
+
           <div>
             <h4 className="text-lg font-semibold mb-4">Síguenos</h4>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a
+                href="https://www.facebook.com/p/Mantra-events-61557011395289/"
+                className="text-gray-400 hover:text-white transition-colors duration-200"
+                aria-label="Síguenos en Facebook"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Facebook className="w-6 h-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white">
+              <a
+                href="https://www.instagram.com/mantra_event/"
+                className="text-gray-400 hover:text-white transition-colors duration-200"
+                aria-label="Síguenos en Instagram"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Instagram className="w-6 h-6" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white">
-                <Twitter className="w-6 h-6" />
               </a>
             </div>
           </div>
         </div>
-        
+
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} TechnoEvents. Todos los derechos reservados.</p>
+          <p>
+            &copy; {new Date().getFullYear()} TechnoEvents. Todos los derechos
+            reservados.
+          </p>
         </div>
       </div>
     </footer>

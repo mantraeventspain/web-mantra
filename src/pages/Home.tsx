@@ -5,7 +5,10 @@ import { FeaturedEvents } from "../components/home/FeaturedEvents";
 import { ArtistShowcase } from "../components/home/ArtistShowcase";
 
 export const Home = () => {
-  const { url: videoUrl, isLoading } = usePublicUrl("videos", "pecope2.mp4");
+  const { url: videoUrl, isLoading } = usePublicUrl(
+    "media",
+    "videos/pecope2.mp4"
+  );
 
   return (
     <div className="relative">

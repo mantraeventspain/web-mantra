@@ -1,4 +1,5 @@
 import { Facebook, Instagram } from "lucide-react";
+import { FaSoundcloud } from "react-icons/fa";
 
 export const Footer = () => {
   return (
@@ -66,6 +67,15 @@ export const Footer = () => {
                 rel="noopener noreferrer"
               >
                 <Instagram className="w-6 h-6" />
+              </a>
+              <a
+                href="https://soundcloud.com/mantra-parties"
+                className="text-gray-300 hover:text-mantra-gold transition-colors duration-200"
+                aria-label="Síguenos en Soundcloud"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaSoundcloud className="text-2xl" />
               </a>
             </div>
           </div>

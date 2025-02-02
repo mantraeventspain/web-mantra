@@ -1,13 +1,6 @@
-import { createContext, ReactNode } from "react";
+import { ReactNode } from "react";
+import { SupabaseContext } from "./supabaseContext";
 import { supabase } from "../lib/supabase";
-
-interface SupabaseContextType {
-  supabase: typeof supabase;
-}
-
-export const SupabaseContext = createContext<SupabaseContextType | undefined>(
-  undefined
-);
 
 export function SupabaseProvider({ children }: { children: ReactNode }) {
   return (

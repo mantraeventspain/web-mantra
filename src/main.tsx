@@ -1,6 +1,6 @@
 import { StrictMode, startTransition } from "react";
 import { createRoot } from "react-dom/client";
-import { SupabaseProvider } from "./context/SupabaseContext";
+import { SupabaseProvider } from "./context/SupabaseProvider";
 import App from "./App.tsx";
 import "./index.css";
 

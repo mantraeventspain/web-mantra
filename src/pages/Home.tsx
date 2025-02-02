@@ -30,15 +30,15 @@ export const Home = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative min-h-screen flex items-center justify-center text-white"
+          className="relative min-h-screen flex items-end justify-center text-white pb-10"
         >
           <div className="text-center px-4">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            {/* <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Experiencias Techno Únicas
             </h1>
             <p className="text-xl md:text-2xl mb-8">
               Descubre los mejores eventos de música electrónica
-            </p>
+            </p> */}
             <a
               href="/events"
               className="inline-block bg-mantra-gold hover:bg-mantra-darkGold text-mantra-blue px-8 py-3 rounded-full text-lg font-semibold transition-colors"

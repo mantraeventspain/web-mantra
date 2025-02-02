@@ -38,7 +38,7 @@
 
 ### Presupuesto Recomendado
 
-Basado en una tarifa media de **45€/hora**:
+Basado en una tarifa media:
 
 - **Presupuesto mínimo:** 6.525€
 - **Presupuesto máximo:** 7.875€

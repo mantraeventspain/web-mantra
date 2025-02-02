@@ -1,5 +1,5 @@
 /*
-  # Initial Schema Setup for TechnoEvents Platform
+  # Initial Schema Setup for Mantra Platform
 
   1. New Tables
     - `events`

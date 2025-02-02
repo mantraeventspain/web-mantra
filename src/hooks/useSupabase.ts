@@ -61,3 +61,29 @@ export function useProducts() {
 
   return { products, isLoading, error };
 }
+
+export function usePublicUrl(bucket: string, path: string) {
+  const [url, setUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    async function getPublicUrl() {
+      try {
+        const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+
+        if (data?.publicUrl) {
+          setUrl(data.publicUrl);
+        }
+      } catch (e) {
+        setError(e instanceof Error ? e : new Error("Error al obtener la URL"));
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    getPublicUrl();
+  }, [bucket, path]);
+
+  return { url, isLoading, error };
+}

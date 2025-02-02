@@ -73,10 +73,19 @@ export const ArtistModal = ({ artist, onClose }: ArtistModalProps) => {
                     href={`https://instagram.com/${artist.instagramUsername}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-mantra-blue hover:bg-mantra-gold transition-colors text-white"
+                    className="group flex items-center gap-2 px-6 py-3 rounded-full 
+                    bg-white/10 hover:bg-white/20 active:bg-white/30
+                    transition-all duration-200 ease-in-out
+                    transform hover:scale-105 active:scale-95
+                    text-white cursor-pointer
+                    hover:shadow-lg hover:shadow-white/10
+                    relative overflow-hidden"
                   >
-                    <Instagram className="w-5 h-5" />
-                    <span>Instagram</span>
+                    <span className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Instagram className="w-5 h-5 relative z-10 group-hover:text-mantra-gold transition-colors" />
+                    <span className="relative z-10 group-hover:text-mantra-gold transition-colors">
+                      Instagram
+                    </span>
                   </a>
                 )}
                 {artist.soundcloudUrl && (

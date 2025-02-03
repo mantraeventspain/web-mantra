@@ -18,49 +18,55 @@ export const ArtistModal = ({ artist, onClose }: ArtistModalProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/95 backdrop-blur-lg z-50 flex items-center justify-center"
+        className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
         onClick={(e) => e.target === e.currentTarget && onClose()}
       >
         <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.95, opacity: 0 }}
-          className="relative max-w-2xl mx-auto p-8 text-center"
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          className="relative w-full max-w-3xl bg-zinc-900/95 rounded-2xl overflow-hidden"
         >
-          <button
-            onClick={onClose}
-            className="absolute right-0 top-0 text-gray-400 hover:text-white transition-colors"
-          >
-            <X className="w-6 h-6" />
-          </button>
+          <div className="relative aspect-video">
+            {artist.avatarUrl ? (
+              <img
+                src={artist.avatarUrl}
+                alt={artist.nickname}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-mantra-blue">
+                <span className="text-6xl text-mantra-gold">
+                  {artist.nickname.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/90 to-transparent" />
+          </div>
 
-          <div className="space-y-6">
-            <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-2 border-mantra-gold/20">
-              {artist.avatarUrl ? (
-                <img
-                  src={artist.avatarUrl}
-                  alt={artist.nickname}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-mantra-blue">
-                  <span className="text-4xl text-mantra-gold">
-                    {artist.nickname.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              )}
-            </div>
+          <div className="relative p-8 -mt-20">
+            <button
+              onClick={onClose}
+              className="absolute right-4 top-0 p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10"
+            >
+              <X className="w-6 h-6" />
+            </button>
 
             <div className="space-y-4">
-              <h3 className="text-gray-400 text-lg">{artist.role}</h3>
-              <h2 className="text-4xl font-bold text-white">
-                {artist.nickname}
-              </h2>
-              <p className="text-gray-300 text-lg max-w-xl mx-auto">
+              <div className="space-y-2">
+                <h2 className="text-4xl font-bold text-white">
+                  {artist.nickname}
+                </h2>
+                <h3 className="text-mantra-gold text-lg font-medium">
+                  {artist.role}
+                </h3>
+              </div>
+
+              <p className="text-gray-300 text-lg">
                 {artist.description || "Artista residente en Mantra Events"}
               </p>
 
-              <div className="flex justify-center gap-4">
+              <div className="flex flex-wrap gap-3 pt-4">
                 {artist.instagramUsername && (
                   <SocialLink
                     href={`https://instagram.com/${artist.instagramUsername}`}

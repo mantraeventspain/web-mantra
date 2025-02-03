@@ -1,4 +1,4 @@
-import { X, Instagram } from "lucide-react";
+import { Instagram, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Artist } from "../../types/artist";
 import { FaSoundcloud } from "react-icons/fa";
@@ -25,69 +25,83 @@ export const ArtistModal = ({ artist, onClose }: ArtistModalProps) => {
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
-          className="relative w-full max-w-3xl bg-zinc-900/95 rounded-2xl overflow-hidden"
+          className="bg-gradient-to-b from-mantra-darkBlue/50 to-black rounded-xl max-w-4xl w-full overflow-hidden shadow-2xl"
         >
-          <div className="relative aspect-video">
-            {artist.avatarUrl ? (
-              <img
-                src={artist.avatarUrl}
-                alt={artist.nickname}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-mantra-blue">
-                <span className="text-6xl text-mantra-gold">
-                  {artist.nickname.charAt(0).toUpperCase()}
-                </span>
-              </div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/90 to-transparent" />
-          </div>
-
-          <div className="relative p-8 -mt-20">
+          <div className="relative h-full">
             <button
               onClick={onClose}
-              className="absolute right-4 top-0 p-2 text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/10"
+              className="absolute right-4 top-4 z-50 text-gray-400 hover:text-white transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
+            <div className="relative">
+              {/* Header con gradiente */}
+              {/* <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent z-0" /> */}
 
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <h2 className="text-4xl font-bold text-white">
-                  {artist.nickname}
-                </h2>
-                <h3 className="text-mantra-gold text-lg font-medium">
-                  {artist.role}
-                </h3>
+              {/* Información principal del artista */}
+              <div className="p-8 relative z-10 pointer-events-none">
+                <div className="flex flex-col md:flex-row items-start md:items-end gap-6">
+                  <div className="w-48 h-48 rounded-full overflow-hidden bg-mantra-blue flex-shrink-0 shadow-2xl">
+                    {artist.avatarUrl ? (
+                      <img
+                        src={artist.avatarUrl}
+                        alt={artist.nickname}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-mantra-blue">
+                        <span className="text-6xl text-mantra-gold">
+                          {artist.nickname.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-gray-300 font-medium mb-2">
+                      {artist.role}
+                    </p>
+                    <h2 className="text-5xl font-bold text-white mb-4">
+                      {artist.nickname}
+                    </h2>
+                    <p className="text-gray-300 text-lg leading-relaxed max-w-2xl">
+                      {artist.description ||
+                        "Artista residente en Mantra Events"}
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <p className="text-gray-300 text-lg">
-                {artist.description || "Artista residente en Mantra Events"}
-              </p>
-
-              <div className="flex flex-wrap gap-3 pt-4">
-                {artist.instagramUsername && (
-                  <SocialLink
-                    href={`https://instagram.com/${artist.instagramUsername}`}
-                    icon={<Instagram className="w-5 h-5" />}
-                    label="Instagram"
-                  />
-                )}
-                {artist.soundcloudUrl && (
-                  <SocialLink
-                    href={artist.soundcloudUrl}
-                    icon={<FaSoundcloud className="w-5 h-5" />}
-                    label="SoundCloud"
-                  />
-                )}
-                {artist.beatportUrl && (
-                  <SocialLink
-                    href={artist.beatportUrl}
-                    icon={<SiBeatport className="w-5 h-5" />}
-                    label="Beatport"
-                  />
-                )}
+              {/* Sección de redes sociales */}
+              <div className="px-8 pb-8">
+                <div className="flex flex-wrap gap-4 mt-4">
+                  {artist.instagramUsername && (
+                    <motion.div whileHover={{ y: -2 }} whileTap={{ y: 2 }}>
+                      <SocialLink
+                        href={`https://instagram.com/${artist.instagramUsername}`}
+                        icon={<Instagram className="w-5 h-5" />}
+                        label="Instagram"
+                      />
+                    </motion.div>
+                  )}
+                  {artist.soundcloudUrl && (
+                    <motion.div whileHover={{ y: -2 }} whileTap={{ y: 2 }}>
+                      <SocialLink
+                        href={artist.soundcloudUrl}
+                        icon={<FaSoundcloud className="w-5 h-5" />}
+                        label="SoundCloud"
+                      />
+                    </motion.div>
+                  )}
+                  {artist.beatportUrl && (
+                    <motion.div whileHover={{ y: -2 }} whileTap={{ y: 2 }}>
+                      <SocialLink
+                        href={artist.beatportUrl}
+                        icon={<SiBeatport className="w-5 h-5" />}
+                        label="Beatport"
+                      />
+                    </motion.div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -108,11 +122,17 @@ const SocialLink = ({ href, icon, label }: SocialLinkProps) => (
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="flex items-center gap-2 px-4 py-2 rounded-full 
-              bg-zinc-800/50 hover:bg-white/10 transition-colors 
-              group text-white hover:text-mantra-gold"
+    className="group flex items-center gap-2 px-6 py-3 rounded-full 
+      bg-white/10 hover:bg-white/20 active:bg-white/30 
+      transition-all duration-200 ease-in-out cursor-pointer
+      hover:scale-105 active:scale-95 text-white
+      hover:shadow-lg hover:shadow-white/10"
   >
-    {icon}
-    <span className="font-medium">{label}</span>
+    <span className="group-hover:text-mantra-gold transition-colors">
+      {icon}
+    </span>
+    <span className="group-hover:text-mantra-gold transition-colors">
+      {label}
+    </span>
   </a>
 );

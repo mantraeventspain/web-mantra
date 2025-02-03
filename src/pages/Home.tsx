@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { usePublicUrl } from "../hooks/useSupabase";
 import { AnimatedSection } from "../components/home/AnimatedSection";
-import { FeaturedEvents } from "../components/home/FeaturedEvents";
 import { ArtistShowcase } from "../components/home/ArtistShowcase";
+import { EventLineup } from "../components/events/EventLineup";
 
 export const Home = () => {
   const { url: videoUrl, isLoading } = usePublicUrl(
@@ -38,24 +38,22 @@ export const Home = () => {
           <div className="text-center px-4">
             {/* <h1 className="text-4xl md:text-6xl font-bold mb-6">
               Experiencias Techno Únicas
-            </h1>
-            <p className="text-xl md:text-2xl mb-8">
-              Descubre los mejores eventos de música electrónica
-            </p> */}
-            <a
+            </h1> */}
+            {/* <a
               href="/events"
               className="inline-block bg-mantra-gold hover:bg-mantra-darkGold text-mantra-blue px-8 py-3 rounded-full text-lg font-semibold transition-colors"
             >
               Ver Próximos Eventos
-            </a>
+            </a> */}
           </div>
         </motion.div>
       </div>
 
       {/* Secciones animadas */}
-      <AnimatedSection>
-        <div id="eventos">
-          <FeaturedEvents />
+
+      <AnimatedSection delay={0.2} className="pt-10">
+        <div id="lineup">
+          <EventLineup />
         </div>
       </AnimatedSection>
 

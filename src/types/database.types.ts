@@ -54,6 +54,57 @@ export type Database = {
         }
         Relationships: []
       }
+      event_artists: {
+        Row: {
+          artist_id: string | null
+          created_at: string | null
+          end_time: string | null
+          event_id: string | null
+          id: string
+          is_headliner: boolean | null
+          performance_order: number
+          start_time: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          artist_id?: string | null
+          created_at?: string | null
+          end_time?: string | null
+          event_id?: string | null
+          id?: string
+          is_headliner?: boolean | null
+          performance_order: number
+          start_time?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          artist_id?: string | null
+          created_at?: string | null
+          end_time?: string | null
+          event_id?: string | null
+          id?: string
+          is_headliner?: boolean | null
+          performance_order?: number
+          start_time?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_artists_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_artists_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       events: {
         Row: {
           created_at: string | null

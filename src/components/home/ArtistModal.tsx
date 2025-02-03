@@ -18,97 +18,69 @@ export const ArtistModal = ({ artist, onClose }: ArtistModalProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-        onClick={onClose}
+        className="fixed inset-0 bg-black/95 backdrop-blur-lg z-50 flex items-center justify-center"
+        onClick={(e) => e.target === e.currentTarget && onClose()}
       >
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          onClick={(e) => e.stopPropagation()}
-          className="bg-gradient-to-br from-mantra-darkBlue to-black rounded-xl max-w-2xl w-full overflow-hidden shadow-2xl"
+          className="relative max-w-2xl mx-auto p-8 text-center"
         >
-          <div className="relative">
-            <button
-              onClick={onClose}
-              className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
+          <button
+            onClick={onClose}
+            className="absolute right-0 top-0 text-gray-400 hover:text-white transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
 
-            <div className="p-8">
-              <div className="flex items-center gap-6">
-                <div className="w-32 h-32 rounded-full overflow-hidden bg-mantra-blue flex-shrink-0">
-                  {artist.avatarUrl ? (
-                    <img
-                      src={artist.avatarUrl}
-                      alt={artist.nickname}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-mantra-blue">
-                      <span className="text-5xl text-mantra-gold">
-                        {artist.nickname.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
+          <div className="space-y-6">
+            <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-2 border-mantra-gold/20">
+              {artist.avatarUrl ? (
+                <img
+                  src={artist.avatarUrl}
+                  alt={artist.nickname}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-mantra-blue">
+                  <span className="text-4xl text-mantra-gold">
+                    {artist.nickname.charAt(0).toUpperCase()}
+                  </span>
                 </div>
-                <div>
-                  <h2 className="text-3xl font-bold text-white mb-2">
-                    {artist.nickname}
-                  </h2>
-                  <p className="text-gray-400">{artist.role}</p>
-                </div>
-              </div>
+              )}
+            </div>
 
-              <div className="mt-8">
-                <p className="text-gray-300 leading-relaxed">
-                  {artist.description || "Artista residente en Mantra Events"}
-                </p>
-              </div>
+            <div className="space-y-4">
+              <h3 className="text-gray-400 text-lg">{artist.role}</h3>
+              <h2 className="text-4xl font-bold text-white">
+                {artist.nickname}
+              </h2>
+              <p className="text-gray-300 text-lg max-w-xl mx-auto">
+                {artist.description || "Artista residente en Mantra Events"}
+              </p>
 
-              <div className="mt-8 flex gap-4">
+              <div className="flex justify-center gap-4">
                 {artist.instagramUsername && (
-                  <a
+                  <SocialLink
                     href={`https://instagram.com/${artist.instagramUsername}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group flex items-center gap-2 px-6 py-3 rounded-full 
-                    bg-white/10 hover:bg-white/20 active:bg-white/30
-                    transition-all duration-200 ease-in-out
-                    transform hover:scale-105 active:scale-95
-                    text-white cursor-pointer
-                    hover:shadow-lg hover:shadow-white/10
-                    relative overflow-hidden"
-                  >
-                    <span className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Instagram className="w-5 h-5 relative z-10 group-hover:text-mantra-gold transition-colors" />
-                    <span className="relative z-10 group-hover:text-mantra-gold transition-colors">
-                      Instagram
-                    </span>
-                  </a>
+                    icon={<Instagram className="w-5 h-5" />}
+                    label="Instagram"
+                  />
                 )}
                 {artist.soundcloudUrl && (
-                  <a
+                  <SocialLink
                     href={artist.soundcloudUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-mantra-blue hover:bg-mantra-gold transition-colors text-white"
-                  >
-                    <FaSoundcloud className="w-5 h-5" />
-                    <span>SoundCloud</span>
-                  </a>
+                    icon={<FaSoundcloud className="w-5 h-5" />}
+                    label="SoundCloud"
+                  />
                 )}
                 {artist.beatportUrl && (
-                  <a
+                  <SocialLink
                     href={artist.beatportUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 rounded-full bg-mantra-blue hover:bg-mantra-gold transition-colors text-white"
-                  >
-                    <SiBeatport className="w-5 h-5" />
-                    <span>Beatport</span>
-                  </a>
+                    icon={<SiBeatport className="w-5 h-5" />}
+                    label="Beatport"
+                  />
                 )}
               </div>
             </div>
@@ -118,3 +90,23 @@ export const ArtistModal = ({ artist, onClose }: ArtistModalProps) => {
     </AnimatePresence>
   );
 };
+
+interface SocialLinkProps {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+}
+
+const SocialLink = ({ href, icon, label }: SocialLinkProps) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="flex items-center gap-2 px-4 py-2 rounded-full 
+              bg-zinc-800/50 hover:bg-white/10 transition-colors 
+              group text-white hover:text-mantra-gold"
+  >
+    {icon}
+    <span className="font-medium">{label}</span>
+  </a>
+);

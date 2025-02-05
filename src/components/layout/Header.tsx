@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 // import { Menu, ShoppingCart, Music } from "lucide-react";
 import { Menu, Music } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
-import { FeaturedTrackPlayer } from "../player/FeaturedTrackPlayer";
 
 export const Header = () => {
   const [isVideoVisible, setIsVideoVisible] = useState(true);
@@ -93,8 +92,6 @@ export const Header = () => {
           <Menu className="w-6 h-6" />
         </button>
       </div>
-
-      <FeaturedTrackPlayer />
 
       {/* Botón de tickets mejorado */}
       <div className="absolute top-8 right-8 hidden md:block">

@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { FloatingPlayer } from "../player/FloatingPlayer";
 
 export const Layout = () => {
   return (
@@ -10,6 +11,7 @@ export const Layout = () => {
         <Outlet />
       </main>
       <Footer />
+      <FloatingPlayer />
     </div>
   );
 };

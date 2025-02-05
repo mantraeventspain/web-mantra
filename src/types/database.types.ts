@@ -249,6 +249,53 @@ export type Database = {
         }
         Relationships: []
       }
+      tracks: {
+        Row: {
+          artist_id: string
+          beatport_url: string | null
+          created_at: string | null
+          filename: string
+          filename_icon: string | null
+          id: string
+          is_featured: boolean
+          release_date: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          artist_id: string
+          beatport_url?: string | null
+          created_at?: string | null
+          filename: string
+          filename_icon?: string | null
+          id?: string
+          is_featured?: boolean
+          release_date?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          artist_id?: string
+          beatport_url?: string | null
+          created_at?: string | null
+          filename?: string
+          filename_icon?: string | null
+          id?: string
+          is_featured?: boolean
+          release_date?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tracks_artist_id_fkey"
+            columns: ["artist_id"]
+            isOneToOne: false
+            referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

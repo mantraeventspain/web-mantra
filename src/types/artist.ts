@@ -6,8 +6,8 @@ export interface Artist {
   lastName2: string | null;
   avatarUrl: string | null;
   description: string | null;
-  instagramUsername: string | null;
-  soundcloudUrl: string | null;
-  beatportUrl: string | null;
+  instagram_username: string | null;
+  soundcloud_url: string | null;
+  beatport_url: string | null;
   role: string | null;
 }

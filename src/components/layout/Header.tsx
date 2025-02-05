@@ -2,10 +2,11 @@ import { Link } from "react-router-dom";
 // import { Menu, ShoppingCart, Music } from "lucide-react";
 import { Menu, Music } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
+import { FeaturedTrackPlayer } from "../player/FeaturedTrackPlayer";
 
 export const Header = () => {
   const [isVideoVisible, setIsVideoVisible] = useState(true);
-  const [isNavVisible, setIsNavVisible] = useState(false);
+  // const [isNavVisible, setIsNavVisible] = useState(false);
   const mouseTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -22,15 +23,15 @@ export const Header = () => {
       }
 
       // Mostrar/ocultar header basado en la dirección del scroll
-      if (scrollPosition > 100) {
-        setIsNavVisible(true);
-      } else {
-        setIsNavVisible(false);
-      }
+      // if (scrollPosition > 100) {
+      //   setIsNavVisible(true);
+      // } else {
+      //   setIsNavVisible(false);
+      // }
     };
 
     const handleMouseMove = () => {
-      setIsNavVisible(true);
+      // setIsNavVisible(true);
 
       // Limpiar el timeout anterior si existe
       if (mouseTimeoutRef.current) {
@@ -38,9 +39,9 @@ export const Header = () => {
       }
 
       // Establecer un nuevo timeout
-      mouseTimeoutRef.current = window.setTimeout(() => {
-        setIsNavVisible(false);
-      }, 2000); // Ocultar después de 2 segundos de inactividad
+      // mouseTimeoutRef.current = window.setTimeout(() => {
+      //   setIsNavVisible(false);
+      // }, 2000); // Ocultar después de 2 segundos de inactividad
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -56,16 +57,16 @@ export const Header = () => {
     };
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      // Usamos scrollIntoView en lugar de scrollTo para mejor compatibilidad
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  };
+  // const scrollToSection = (sectionId: string) => {
+  //   const element = document.getElementById(sectionId);
+  //   if (element) {
+  //     // Usamos scrollIntoView en lugar de scrollTo para mejor compatibilidad
+  //     element.scrollIntoView({
+  //       behavior: "smooth",
+  //       block: "start",
+  //     });
+  //   }
+  // };
 
   return (
     <header
@@ -93,49 +94,7 @@ export const Header = () => {
         </button>
       </div>
 
-      {/* Navegación principal - centrada en desktop */}
-      <nav
-        className={`
-        hidden md:flex justify-center items-center w-full
-        pt-8 space-x-12
-        transition-all duration-500
-        ${isNavVisible ? "opacity-100" : "opacity-0"}
-      `}
-      >
-        {/* Botones de navegación con diseño mejorado */}
-        <button
-          onClick={() => scrollToSection("eventos")}
-          className="group relative px-6 py-2 overflow-hidden"
-        >
-          <span className="relative z-10 text-white group-hover:text-mantra-gold transition-colors duration-300">
-            Eventos
-          </span>
-          <div className="absolute inset-0 border border-mantra-gold/30 rounded-lg transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-          <div className="absolute inset-0 bg-mantra-gold/5 rounded-lg transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-        </button>
-
-        <button
-          onClick={() => scrollToSection("artistas")}
-          className="group relative px-6 py-2 overflow-hidden"
-        >
-          <span className="relative z-10 text-white group-hover:text-mantra-gold transition-colors duration-300">
-            Artistas
-          </span>
-          <div className="absolute inset-0 border border-mantra-gold/30 rounded-lg transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-          <div className="absolute inset-0 bg-mantra-gold/5 rounded-lg transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-        </button>
-
-        <Link
-          to="/gallery"
-          className="group relative px-6 py-2 overflow-hidden"
-        >
-          <span className="relative z-10 text-white group-hover:text-mantra-gold transition-colors duration-300">
-            Galería
-          </span>
-          <div className="absolute inset-0 border border-mantra-gold/30 rounded-lg transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-          <div className="absolute inset-0 bg-mantra-gold/5 rounded-lg transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-        </Link>
-      </nav>
+      <FeaturedTrackPlayer />
 
       {/* Botón de tickets mejorado */}
       <div className="absolute top-8 right-8 hidden md:block">

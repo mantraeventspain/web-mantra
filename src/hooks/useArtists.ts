@@ -28,9 +28,9 @@ export function useArtists() {
             artistNickname: artist.nickname,
           }),
           description: artist.description,
-          instagramUsername: artist.instagram_username,
-          soundcloudUrl: artist.soundcloud_url,
-          beatportUrl: artist.beatport_url,
+          instagram_username: artist.instagram_username,
+          soundcloud_url: artist.soundcloud_url,
+          beatport_url: artist.beatport_url,
           role: artist.role,
         }));
 

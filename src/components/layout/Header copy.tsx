@@ -1,22 +1,46 @@
 import { Link } from "react-router-dom";
 // import { Menu, ShoppingCart, Music } from "lucide-react";
 import { Menu, Music } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export const Header = () => {
-  // TODO: Hacer que el header se muestre cuando el usuario haga scroll o mueva el mouse
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVideoVisible, setIsVideoVisible] = useState(true);
+  const [isNavVisible, setIsNavVisible] = useState(false);
+  const mouseTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Mostrar el header después de 100px de scroll o si el usuario mueve el mouse
-      if (window.scrollY > 100) {
-        setIsVisible(true);
+      // Altura del viewport
+      const viewportHeight = window.innerHeight;
+      const scrollPosition = window.scrollY;
+
+      // El video deja de ser visible cuando hemos scrolleado más del 90% de su altura
+      if (scrollPosition > viewportHeight * 0.9) {
+        setIsVideoVisible(false);
+      } else {
+        setIsVideoVisible(true);
+      }
+
+      // Mostrar/ocultar header basado en la dirección del scroll
+      if (scrollPosition > 100) {
+        setIsNavVisible(true);
+      } else {
+        setIsNavVisible(false);
       }
     };
 
     const handleMouseMove = () => {
-      setIsVisible(true);
+      setIsNavVisible(true);
+
+      // Limpiar el timeout anterior si existe
+      if (mouseTimeoutRef.current) {
+        window.clearTimeout(mouseTimeoutRef.current);
+      }
+
+      // Establecer un nuevo timeout
+      mouseTimeoutRef.current = window.setTimeout(() => {
+        setIsNavVisible(false);
+      }, 2000); // Ocultar después de 2 segundos de inactividad
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -25,74 +49,106 @@ export const Header = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("mousemove", handleMouseMove);
+      // Limpiar el timeout al desmontar
+      if (mouseTimeoutRef.current) {
+        window.clearTimeout(mouseTimeoutRef.current);
+      }
     };
   }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const headerHeight = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.scrollY - headerHeight;
-
-      window.scrollTo({
-        top: offsetPosition,
+      // Usamos scrollIntoView en lugar de scrollTo para mejor compatibilidad
+      element.scrollIntoView({
         behavior: "smooth",
+        block: "start",
       });
     }
   };
 
   return (
-    // <header className="fixed w-full z-50 bg-mantra-darkBlue/80 backdrop-blur-sm">
     <header
-      className={`fixed w-full z-50 bg-mantra-darkBlue/80 backdrop-blur-sm transition-all duration-500 ${
-        isVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+      className={`fixed w-full z-50 transition-all duration-500 ${
+        !isVideoVisible
+          ? "opacity-0 -translate-y-full pointer-events-none"
+          : "opacity-100 translate-y-0"
       }`}
     >
-      <div className="container mx-auto px-4 py-4">
-        <nav className="flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
-            <Music className="w-8 h-8 text-mantra-gold" />
-            <span className="text-xl font-bold text-mantra-gold">Mantra</span>
-          </Link>
+      {/* Logo en la esquina superior izquierda */}
+      <div className="absolute top-8 left-8">
+        <Link
+          to="/"
+          className="flex items-center space-x-2 hover:scale-105 transition-transform"
+        >
+          <Music className="w-8 h-8 text-mantra-gold" />
+          <span className="text-xl font-bold text-mantra-gold">Mantra</span>
+        </Link>
+      </div>
 
-          <div className="hidden md:flex items-center space-x-8">
-            <button
-              onClick={() => scrollToSection("eventos")}
-              className="text-white hover:text-mantra-gold transition-colors"
-            >
-              Eventos
-            </button>
-            <button
-              onClick={() => scrollToSection("artistas")}
-              className="text-white hover:text-mantra-gold transition-colors"
-            >
-              Artistas
-            </button>
-            {/* <Link
-              to="/shop"
-              className="text-white hover:text-mantra-gold transition-colors"
-            >
-              Tienda
-            </Link> */}
-            <Link
-              to="/gallery"
-              className="text-white hover:text-mantra-gold transition-colors"
-            >
-              Galería
-            </Link>
-            <Link
-              to="/cart"
-              className="text-white hover:text-mantra-gold transition-colors"
-            >
-              {/* <ShoppingCart className="w-6 h-6" /> */}
-            </Link>
-          </div>
+      {/* Menú hamburguesa en móvil */}
+      <div className="absolute top-8 right-8 md:hidden">
+        <button className="text-mantra-gold hover:scale-105 transition-transform">
+          <Menu className="w-6 h-6" />
+        </button>
+      </div>
 
-          <button className="md:hidden text-mantra-gold">
-            <Menu className="w-6 h-6" />
-          </button>
-        </nav>
+      {/* Navegación principal - centrada en desktop */}
+      <nav
+        className={`
+        hidden md:flex justify-center items-center w-full
+        pt-8 space-x-12
+        transition-all duration-500
+        ${isNavVisible ? "opacity-100" : "opacity-0"}
+      `}
+      >
+        {/* Botones de navegación con diseño mejorado */}
+        <button
+          onClick={() => scrollToSection("eventos")}
+          className="group relative px-6 py-2 overflow-hidden"
+        >
+          <span className="relative z-10 text-white group-hover:text-mantra-gold transition-colors duration-300">
+            Eventos
+          </span>
+          <div className="absolute inset-0 border border-mantra-gold/30 rounded-lg transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+          <div className="absolute inset-0 bg-mantra-gold/5 rounded-lg transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+        </button>
+
+        <button
+          onClick={() => scrollToSection("artistas")}
+          className="group relative px-6 py-2 overflow-hidden"
+        >
+          <span className="relative z-10 text-white group-hover:text-mantra-gold transition-colors duration-300">
+            Artistas
+          </span>
+          <div className="absolute inset-0 border border-mantra-gold/30 rounded-lg transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+          <div className="absolute inset-0 bg-mantra-gold/5 rounded-lg transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+        </button>
+
+        <Link
+          to="/gallery"
+          className="group relative px-6 py-2 overflow-hidden"
+        >
+          <span className="relative z-10 text-white group-hover:text-mantra-gold transition-colors duration-300">
+            Galería
+          </span>
+          <div className="absolute inset-0 border border-mantra-gold/30 rounded-lg transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+          <div className="absolute inset-0 bg-mantra-gold/5 rounded-lg transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+        </Link>
+      </nav>
+
+      {/* Botón de tickets mejorado */}
+      <div className="absolute top-8 right-8 hidden md:block">
+        <Link
+          to="/subscribe"
+          className="group relative inline-flex items-center px-6 py-2 overflow-hidden rounded-full bg-transparent"
+        >
+          <span className="absolute inset-0 bg-mantra-gold transition-transform duration-300 group-hover:scale-105" />
+          <span className="relative z-10 text-black font-medium text-sm uppercase tracking-wider transition-transform duration-300 group-hover:scale-105">
+            Comprar Tickets
+          </span>
+          <div className="absolute inset-0 border border-mantra-gold rounded-full opacity-50 group-hover:opacity-0 transition-opacity duration-300" />
+        </Link>
       </div>
     </header>
   );

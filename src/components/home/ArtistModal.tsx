@@ -74,28 +74,28 @@ export const ArtistModal = ({ artist, onClose }: ArtistModalProps) => {
               {/* Sección de redes sociales */}
               <div className="px-8 pb-8">
                 <div className="flex flex-wrap gap-4 mt-4">
-                  {artist.instagramUsername && (
+                  {artist.instagram_username && (
                     <motion.div whileHover={{ y: -2 }} whileTap={{ y: 2 }}>
                       <SocialLink
-                        href={`https://instagram.com/${artist.instagramUsername}`}
+                        href={`https://instagram.com/${artist.instagram_username}`}
                         icon={<Instagram className="w-5 h-5" />}
                         label="Instagram"
                       />
                     </motion.div>
                   )}
-                  {artist.soundcloudUrl && (
+                  {artist.soundcloud_url && (
                     <motion.div whileHover={{ y: -2 }} whileTap={{ y: 2 }}>
                       <SocialLink
-                        href={artist.soundcloudUrl}
+                        href={artist.soundcloud_url}
                         icon={<FaSoundcloud className="w-5 h-5" />}
                         label="SoundCloud"
                       />
                     </motion.div>
                   )}
-                  {artist.beatportUrl && (
+                  {artist.beatport_url && (
                     <motion.div whileHover={{ y: -2 }} whileTap={{ y: 2 }}>
                       <SocialLink
-                        href={artist.beatportUrl}
+                        href={artist.beatport_url}
                         icon={<SiBeatport className="w-5 h-5" />}
                         label="Beatport"
                       />

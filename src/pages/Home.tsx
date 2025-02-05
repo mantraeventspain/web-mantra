@@ -3,6 +3,7 @@ import { usePublicUrl } from "../hooks/useSupabase";
 import { AnimatedSection } from "../components/home/AnimatedSection";
 import { ArtistShowcase } from "../components/home/ArtistShowcase";
 import { EventLineup } from "../components/events/EventLineup";
+import { FeaturedTrack } from "../components/home/FeaturedTrack";
 
 export const Home = () => {
   const { url: videoUrl, isLoading } = usePublicUrl(
@@ -50,10 +51,15 @@ export const Home = () => {
       </div>
 
       {/* Secciones animadas */}
-
       <AnimatedSection delay={0.2} className="pt-10">
         <div id="lineup">
           <EventLineup />
+        </div>
+      </AnimatedSection>
+
+      <AnimatedSection delay={0.2}>
+        <div className="container mx-auto px-4">
+          <FeaturedTrack />
         </div>
       </AnimatedSection>
 

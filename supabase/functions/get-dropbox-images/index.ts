@@ -17,48 +17,64 @@ const corsHeaders = {
   "Cache-Control": "public, max-age=3600", // Cache por 1 hora
 };
 
+const BATCH_SIZE = 25; // Dropbox recomienda no más de 25 archivos por lote
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    const { path } = await req.json();
+    const { path, size = "w256h256", original = false } = await req.json();
+
+    const dbx = new Dropbox({
+      accessToken: Deno.env.get("DROPBOX_ACCESS_TOKEN"),
+    });
+
+    // Si se solicita la imagen original
+    if (original) {
+      try {
+        const response = await dbx.filesGetTemporaryLink({
+          path,
+        });
+
+        return new Response(JSON.stringify({ url: response.result.link }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      } catch (error) {
+        console.error("Error al obtener enlace temporal:", error);
+        throw new Error("No se pudo obtener el enlace temporal");
+      }
+    }
 
     // Inicializar cliente de Supabase
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
       {
-        auth: {
-          persistSession: false,
-        },
+        auth: { persistSession: false },
       }
     );
 
     // Verificar caché
+    const cacheKey = `${path}-${size}`;
     const { data: cachedData, error: cacheError } = await supabaseAdmin
       .from("dropbox_cache")
       .select("urls, updated_at")
-      .eq("path", path)
+      .eq("path", cacheKey)
       .single();
 
     if (!cacheError && cachedData) {
       const cacheAge = Date.now() - new Date(cachedData.updated_at).getTime();
       if (cacheAge < 24 * 60 * 60 * 1000) {
-        // 24 horas
         return new Response(JSON.stringify(cachedData.urls), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
     }
 
-    // Si no hay caché válido, obtener de Dropbox
-    const dbx = new Dropbox({
-      accessToken: Deno.env.get("DROPBOX_ACCESS_TOKEN"),
-    });
-
-    const response = await dbx.filesListFolder({ path, limit: 100 });
+    // Obtener lista de archivos
+    const response = await dbx.filesListFolder({ path });
 
     if (!response?.result?.entries) {
       throw new Error("No se pudo obtener la lista de archivos de Dropbox");
@@ -68,42 +84,43 @@ serve(async (req) => {
       entry.name.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/)
     );
 
-    const temporaryLinks = await Promise.all(
-      imageEntries.map(async (entry) => {
-        try {
-          const linkResponse = await dbx.filesGetTemporaryLink({
-            path: entry.path_display || "",
-          });
-          return linkResponse.result.link;
-        } catch (error) {
-          console.error(
-            `Error al obtener enlace temporal para ${entry.path_display}:`,
-            error
-          );
-          return null;
-        }
-      })
-    );
+    // Procesar en lotes
+    const allThumbnails = [];
+    for (let i = 0; i < imageEntries.length; i += BATCH_SIZE) {
+      const batch = imageEntries.slice(i, i + BATCH_SIZE);
 
-    const validLinks = temporaryLinks.filter(Boolean);
+      const thumbnailsResponse = await dbx.filesGetThumbnailBatch({
+        entries: batch.map((entry) => ({
+          path: entry.path_display || "",
+          format: "jpeg",
+          size,
+          mode: "strict",
+        })),
+      });
 
-    // Actualizar caché
-    try {
-      await supabaseAdmin.from("dropbox_cache").upsert(
-        {
-          path,
-          urls: validLinks,
-          updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: "path",
-        }
+      const batchThumbnails = thumbnailsResponse.result.entries.map(
+        (entry) => ({
+          thumbnail: entry.thumbnail
+            ? `data:image/jpeg;base64,${entry.thumbnail}`
+            : null,
+          originalPath: entry.metadata.path_display,
+        })
       );
-    } catch (cacheError) {
-      console.error("Error al actualizar caché:", cacheError);
+
+      allThumbnails.push(...batchThumbnails);
     }
 
-    return new Response(JSON.stringify(validLinks), {
+    // Actualizar caché
+    await supabaseAdmin.from("dropbox_cache").upsert(
+      {
+        path: cacheKey,
+        urls: allThumbnails,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "path" }
+    );
+
+    return new Response(JSON.stringify(allThumbnails), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {

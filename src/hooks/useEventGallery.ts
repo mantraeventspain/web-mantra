@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { getTemporaryLinks } from "../services/dropboxService";
+import {
+  getTemporaryLinks,
+  getOriginalImage,
+  type ImageUrl,
+} from "../services/dropboxService";
 
 interface UseEventGalleryProps {
   eventTitle: string;
@@ -8,9 +12,9 @@ interface UseEventGalleryProps {
 
 export function useEventGallery({
   eventTitle,
-  imagesPerPage = 6,
+  imagesPerPage = 25,
 }: UseEventGalleryProps) {
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<ImageUrl[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [page, setPage] = useState(1);
@@ -59,11 +63,16 @@ export function useEventGallery({
     }
   };
 
+  const getOriginal = async (path: string) => {
+    return await getOriginalImage(path);
+  };
+
   return {
     images,
     isLoading,
     error,
     hasMore,
     loadMore,
+    getOriginal,
   };
 }

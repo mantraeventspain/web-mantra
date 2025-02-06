@@ -5,6 +5,7 @@ import { usePastEvents } from "../../hooks/usePastEvents";
 import { useEventGallery } from "../../hooks/useEventGallery";
 import { SectionTitle } from "../ui/SectionTitle";
 import { EventLineup } from "../events/EventLineup";
+import { getOriginalImage } from "../../services/dropboxService";
 
 export const PastEvents = () => {
   const { events, isLoading: eventsLoading, error } = usePastEvents();
@@ -20,7 +21,7 @@ export const PastEvents = () => {
     loadMore,
   } = useEventGallery({
     eventTitle: selectedEventTitle || "",
-    imagesPerPage: 6,
+    imagesPerPage: 25,
   });
 
   const handleGalleryOpen = (event: { title: string }) => {
@@ -137,17 +138,22 @@ export const PastEvents = () => {
               </button>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-h-[80vh] overflow-y-auto">
-                {galleryImages.map((imageUrl, index) => (
+                {galleryImages.map((image, index) => (
                   <div
-                    key={`${imageUrl}-${index}`}
+                    key={`${image.originalPath}-${index}`}
                     className="relative group aspect-square cursor-pointer"
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       e.stopPropagation();
-                      window.open(imageUrl, "_blank");
+                      const originalUrl = await getOriginalImage(
+                        image.originalPath
+                      );
+                      if (originalUrl) {
+                        window.open(originalUrl, "_blank");
+                      }
                     }}
                   >
                     <img
-                      src={imageUrl}
+                      src={image.thumbnail || "/placeholder.jpg"}
                       alt="Evento"
                       className="w-full h-full object-cover rounded-lg"
                       loading="lazy"

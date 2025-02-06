@@ -4,6 +4,7 @@ import { AnimatedSection } from "../components/home/AnimatedSection";
 import { ArtistShowcase } from "../components/home/ArtistShowcase";
 import { EventLineup } from "../components/events/EventLineup";
 import { FeaturedTrack } from "../components/home/FeaturedTrack";
+import { PastEvents } from "../components/home/PastEvents";
 
 export const Home = () => {
   const { url: videoUrl, isLoading } = usePublicUrl(
@@ -61,6 +62,10 @@ export const Home = () => {
         <div className="container mx-auto px-4">
           <FeaturedTrack />
         </div>
+      </AnimatedSection>
+
+      <AnimatedSection delay={0.2}>
+        <PastEvents />
       </AnimatedSection>
 
       <AnimatedSection delay={0.2}>

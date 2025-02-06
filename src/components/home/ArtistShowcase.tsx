@@ -3,6 +3,7 @@ import { useArtists } from "../../hooks/useArtists";
 import { ArtistModal } from "./ArtistModal";
 import { motion } from "framer-motion";
 import type { Artist } from "../../types/artist.ts";
+import { SectionTitle } from "../ui/SectionTitle.tsx";
 
 export const ArtistShowcase = () => {
   const { artists, isLoading, error } = useArtists();
@@ -31,9 +32,7 @@ export const ArtistShowcase = () => {
   return (
     <>
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-12 text-mantra-gold text-center">
-          Artistas
-        </h2>
+        <SectionTitle title="Artistas" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {artists.map((artist, index) => (
             <motion.div

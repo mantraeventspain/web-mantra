@@ -1,19 +1,15 @@
 import { SiBeatport } from "react-icons/si";
-import { useEventLineup } from "../../hooks/useEventLineup";
+import { useEventLineupById } from "../../hooks/useEventLineupById";
 import { FaInstagram, FaSoundcloud } from "react-icons/fa";
+import { SectionTitle } from "../ui/SectionTitle";
 
-export const EventLineup = () => {
-  const { event, lineup, isLoading, error } = useEventLineup();
+interface EventLineupProps {
+  eventId?: string | null;
+}
 
-  // Añadir console.log para debugging
-  console.log(
-    "Lineup data:",
-    lineup.map((artist) => ({
-      nickname: artist.nickname,
-      instagram: artist.instagram_username,
-      beatport: artist.beatport_url,
-      soundcloud: artist.soundcloud_url,
-    }))
+export const EventLineup = ({ eventId }: EventLineupProps) => {
+  const { event, lineup, isLoading, error } = useEventLineupById(
+    eventId || null
   );
 
   if (isLoading) {
@@ -35,7 +31,7 @@ export const EventLineup = () => {
   if (!event) {
     return (
       <div className="text-center py-12 text-gray-400">
-        No hay eventos próximos programados.
+        No se encontró el evento.
       </div>
     );
   }
@@ -77,13 +73,7 @@ export const EventLineup = () => {
         </div>
       </div>
 
-      {/* Line-up título con decoración */}
-      <div className="relative text-center mb-16">
-        <div className="absolute top-1/2 left-0 w-full h-px bg-mantra-gold/20"></div>
-        <h3 className="relative inline-block text-3xl font-bold text-mantra-gold px-8 bg-black">
-          Line-up
-        </h3>
-      </div>
+      <SectionTitle title="Line-up" />
 
       {/* Artista Principal - Añadir efectos de hover y animaciones */}
       {lineup
@@ -149,12 +139,6 @@ export const EventLineup = () => {
                   <h4 className="text-4xl font-bold text-white mb-3">
                     {headliner.nickname}
                   </h4>
-                  <p className="text-xl text-gray-300 mb-4">{headliner.role}</p>
-                  {headliner.description && (
-                    <p className="text-gray-400 mb-6 max-w-2xl leading-relaxed">
-                      {headliner.description}
-                    </p>
-                  )}
                   {headliner.startTime && (
                     <div className="inline-block bg-mantra-gold/20 px-6 py-2 rounded-full">
                       <p className="text-mantra-gold text-xl font-medium">
@@ -200,10 +184,8 @@ export const EventLineup = () => {
                   <h4 className="text-2xl font-bold text-white mb-2">
                     {artist.nickname}
                   </h4>
-                  <p className="text-gray-400 mb-3">{artist.role}</p>
                   {artist.startTime && (
                     <div className="relative mt-4">
-                      <div className="absolute inset-0 bg-mantra-gold/10 rounded-full blur"></div>
                       <p className="relative text-mantra-gold font-medium px-4 py-2 rounded-full bg-mantra-gold/5 inline-block">
                         {new Date(artist.startTime).toLocaleTimeString([], {
                           hour: "2-digit",

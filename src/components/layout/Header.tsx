@@ -101,7 +101,7 @@ export const Header = () => {
         >
           <span className="absolute inset-0 bg-mantra-gold transition-transform duration-300 group-hover:scale-105" />
           <span className="relative z-10 text-black font-medium text-sm uppercase tracking-wider transition-transform duration-300 group-hover:scale-105">
-            Comprar Tickets
+            Entradas
           </span>
           <div className="absolute inset-0 border border-mantra-gold rounded-full opacity-50 group-hover:opacity-0 transition-opacity duration-300" />
         </Link>

@@ -54,6 +54,24 @@ export type Database = {
         }
         Relationships: []
       }
+      dropbox_cache: {
+        Row: {
+          path: string
+          updated_at: string
+          urls: Json
+        }
+        Insert: {
+          path: string
+          updated_at?: string
+          urls: Json
+        }
+        Update: {
+          path?: string
+          updated_at?: string
+          urls?: Json
+        }
+        Relationships: []
+      }
       event_artists: {
         Row: {
           artist_id: string | null

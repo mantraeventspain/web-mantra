@@ -1,0 +1,9 @@
+{
+  "imports": {
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.7",
+    "npm:dropbox": "https://esm.sh/dropbox@10.34.0"
+  },
+  "tasks": {
+    "start": "deno run --allow-net --allow-env index.ts"
+  }
+}

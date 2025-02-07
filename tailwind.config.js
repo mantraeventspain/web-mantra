@@ -3,10 +3,14 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["AbhayaLibre", "system-ui", "sans-serif"],
+        abhaya: ["AbhayaLibre", "serif"],
+      },
       colors: {
         mantra: {
-          gold: "#D4A657",
-          darkGold: "#B38B45",
+          gold: "#D4A657", // Color dorado principal
+          darkGold: "#B38B45", // Versión más oscura del dorado
           blue: "#1A2B3C",
           darkBlue: "#0F1A24",
         },

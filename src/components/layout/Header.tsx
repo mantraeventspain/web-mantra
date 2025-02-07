@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-// import { Menu, ShoppingCart, Music } from "lucide-react";
-import { Menu, Music } from "lucide-react";
+import { Music } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
+import { useSiteConfig } from "../../hooks/useSiteConfig";
 
 export const Header = () => {
   const [isVideoVisible, setIsVideoVisible] = useState(true);
-  // const [isNavVisible, setIsNavVisible] = useState(false);
   const mouseTimeoutRef = useRef<number | null>(null);
+  const { config } = useSiteConfig();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,27 +20,13 @@ export const Header = () => {
       } else {
         setIsVideoVisible(true);
       }
-
-      // Mostrar/ocultar header basado en la dirección del scroll
-      // if (scrollPosition > 100) {
-      //   setIsNavVisible(true);
-      // } else {
-      //   setIsNavVisible(false);
-      // }
     };
 
     const handleMouseMove = () => {
-      // setIsNavVisible(true);
-
       // Limpiar el timeout anterior si existe
       if (mouseTimeoutRef.current) {
         window.clearTimeout(mouseTimeoutRef.current);
       }
-
-      // Establecer un nuevo timeout
-      // mouseTimeoutRef.current = window.setTimeout(() => {
-      //   setIsNavVisible(false);
-      // }, 2000); // Ocultar después de 2 segundos de inactividad
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -55,17 +41,6 @@ export const Header = () => {
       }
     };
   }, []);
-
-  // const scrollToSection = (sectionId: string) => {
-  //   const element = document.getElementById(sectionId);
-  //   if (element) {
-  //     // Usamos scrollIntoView en lugar de scrollTo para mejor compatibilidad
-  //     element.scrollIntoView({
-  //       behavior: "smooth",
-  //       block: "start",
-  //     });
-  //   }
-  // };
 
   return (
     <header
@@ -86,25 +61,35 @@ export const Header = () => {
         </Link>
       </div>
 
-      {/* Menú hamburguesa en móvil */}
-      <div className="absolute top-8 right-8 md:hidden">
-        <button className="text-mantra-gold hover:scale-105 transition-transform">
-          <Menu className="w-6 h-6" />
-        </button>
-      </div>
-
       {/* Botón de tickets mejorado */}
       <div className="absolute top-8 right-8 hidden md:block">
-        <Link
-          to="/subscribe"
-          className="group relative inline-flex items-center px-6 py-2 overflow-hidden rounded-full bg-transparent"
-        >
-          <span className="absolute inset-0 bg-mantra-gold transition-transform duration-300 group-hover:scale-105" />
-          <span className="relative z-10 text-black font-medium text-sm uppercase tracking-wider transition-transform duration-300 group-hover:scale-105">
-            Entradas
-          </span>
-          <div className="absolute inset-0 border border-mantra-gold rounded-full opacity-50 group-hover:opacity-0 transition-opacity duration-300" />
-        </Link>
+        {config.tickets_url.startsWith("http") ? (
+          <a
+            href={config.tickets_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative inline-flex items-center px-6 py-2 overflow-hidden rounded-full bg-transparent"
+          >
+            <span className="absolute inset-0 bg-mantra-gold transition-transform duration-300 group-hover:scale-105" />
+            <span className="relative z-10 text-black font-medium text-sm uppercase tracking-wider transition-transform duration-300 group-hover:scale-105">
+              Entradas
+            </span>
+            <div className="absolute inset-0 border border-mantra-gold rounded-full opacity-50 group-hover:opacity-0 transition-opacity duration-300" />
+          </a>
+        ) : (
+          <Link
+            to={config.tickets_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative inline-flex items-center px-6 py-2 overflow-hidden rounded-full bg-transparent"
+          >
+            <span className="absolute inset-0 bg-mantra-gold transition-transform duration-300 group-hover:scale-105" />
+            <span className="relative z-10 text-black font-medium text-sm uppercase tracking-wider transition-transform duration-300 group-hover:scale-105">
+              Entradas
+            </span>
+            <div className="absolute inset-0 border border-mantra-gold rounded-full opacity-50 group-hover:opacity-0 transition-opacity duration-300" />
+          </Link>
+        )}
       </div>
     </header>
   );

@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, Image as ImageIcon, Users, X } from "lucide-react";
+import {
+  Calendar,
+  Image as ImageIcon,
+  Users,
+  X,
+  ChevronDown,
+} from "lucide-react";
 import { usePastEvents } from "../../hooks/usePastEvents";
 import { useEventGallery } from "../../hooks/useEventGallery";
 import { SectionTitle } from "../ui/SectionTitle";
@@ -126,59 +132,84 @@ export const PastEvents = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={() => setSelectedEventTitle(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="relative max-w-7xl w-full bg-mantra-blue/30 rounded-xl p-6 backdrop-blur-sm">
-              <button
-                onClick={() => setSelectedEventTitle(null)}
-                className="absolute right-4 top-4 text-white/70 hover:text-white"
-              >
-                <X className="w-6 h-6" />
-              </button>
+            {/* Fondo con gradiente */}
+            <div className="absolute inset-0 bg-black/90 backdrop-blur-sm">
+              <div className="absolute inset-0 bg-gradient-radial from-mantra-gold/20 via-black/95 to-black">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,166,87,0.15),rgba(15,26,36,0.95)_50%,rgba(0,0,0,1)_100%)]" />
+              </div>
+            </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-h-[80vh] overflow-y-auto">
-                {galleryImages.map((image, index) => (
-                  <div
-                    key={`${image.originalPath}-${index}`}
-                    className="relative group aspect-square cursor-pointer"
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      const originalUrl = await getOriginalImage(
-                        image.originalPath
-                      );
-                      if (originalUrl) {
-                        window.open(originalUrl, "_blank");
-                      }
-                    }}
-                  >
-                    <img
-                      src={image.thumbnail || "/placeholder.jpg"}
-                      alt="Evento"
-                      className="w-full h-full object-cover rounded-lg"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="text-white text-sm">Ver original</span>
-                    </div>
-                  </div>
-                ))}
+            {/* Contenido del modal */}
+            <div
+              className="relative max-w-7xl w-full bg-mantra-blue/30 rounded-xl backdrop-blur-sm flex flex-col max-h-[90vh] border border-mantra-gold/10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header fijo */}
+              <div className="sticky top-0 z-10 flex justify-between items-center p-6 border-b border-mantra-gold/10 bg-mantra-blue/30 backdrop-blur-md rounded-t-xl">
+                <h3 className="text-xl font-bold text-white">
+                  Galería de Fotos
+                </h3>
+                <button
+                  onClick={() => setSelectedEventTitle(null)}
+                  className="text-white/70 hover:text-mantra-gold transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
               </div>
 
+              {/* Contenido scrolleable con estilo personalizado */}
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {galleryImages.map((image, index) => (
+                    <div
+                      key={`${image.originalPath}-${index}`}
+                      className="relative group aspect-square cursor-pointer"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        const originalUrl = await getOriginalImage(
+                          image.originalPath
+                        );
+                        if (originalUrl) {
+                          window.open(originalUrl, "_blank");
+                        }
+                      }}
+                    >
+                      <img
+                        src={image.thumbnail || "/placeholder.jpg"}
+                        alt="Evento"
+                        className="w-full h-full object-cover rounded-lg"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                        <span className="text-white text-sm">Ver original</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Footer fijo con botón de cargar más */}
               {hasMore && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    loadMore();
-                  }}
-                  className="mt-6 w-full py-4 text-mantra-gold hover:text-white transition-colors"
-                >
-                  {galleryLoading ? (
-                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-mantra-gold mx-auto" />
-                  ) : (
-                    "Cargar más imágenes"
-                  )}
-                </button>
+                <div className="sticky bottom-0 p-6 border-t border-mantra-gold/10 bg-mantra-blue/30 backdrop-blur-md rounded-b-xl">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      loadMore();
+                    }}
+                    className="w-full py-3 px-6 bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    {galleryLoading ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-mantra-gold" />
+                    ) : (
+                      <>
+                        <span>Cargar más imágenes</span>
+                        <ChevronDown className="w-4 h-4" />
+                      </>
+                    )}
+                  </button>
+                </div>
               )}
             </div>
           </motion.div>
@@ -196,16 +227,26 @@ export const PastEvents = () => {
             onClick={() => setSelectedEvent(null)}
           >
             <div
-              className="relative max-w-7xl w-full bg-mantra-blue/30 rounded-xl p-6 backdrop-blur-sm overflow-y-auto max-h-[90vh]"
+              className="relative max-w-7xl w-full bg-mantra-blue/30 rounded-xl backdrop-blur-sm flex flex-col max-h-[90vh]"
               onClick={(e) => e.stopPropagation()}
             >
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="absolute right-4 top-4 text-white/70 hover:text-white"
-              >
-                <X className="w-6 h-6" />
-              </button>
-              <EventLineup eventId={selectedEvent} />
+              {/* Header fijo */}
+              <div className="sticky top-0 z-10 flex justify-between items-center p-6 border-b border-mantra-gold/10 bg-mantra-blue/30 backdrop-blur-md rounded-t-xl">
+                <h3 className="text-xl font-bold text-white">
+                  Line-up del Evento
+                </h3>
+                <button
+                  onClick={() => setSelectedEvent(null)}
+                  className="text-white/70 hover:text-white transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Contenido scrolleable */}
+              <div className="flex-1 overflow-y-auto p-6">
+                <EventLineup eventId={selectedEvent} />
+              </div>
             </div>
           </motion.div>
         )}

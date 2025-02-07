@@ -1,38 +1,47 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../lib/supabase";
 import { getArtistAvatarUrl } from "../utils/artistHelpers";
 import type { Artist } from "../types/artist";
 
-export function useArtists() {
+export function useArtists({
+  includeInactive = false,
+}: { includeInactive?: boolean } = {}) {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    async function fetchArtists() {
+  const fetchArtists = useCallback(
+    async ({ includeInactive = false }: { includeInactive?: boolean } = {}) => {
       try {
-        const { data, error } = await supabase
-          .from("artists")
-          .select("*")
-          .order("nickname");
+        setIsLoading(true);
+        let query = supabase.from("artists").select("*").order("nickname");
+
+        if (!includeInactive) {
+          query = query.eq("is_active", true);
+        }
+
+        const { data, error } = await query;
 
         if (error) throw error;
 
-        const artistsWithUrls = data.map((artist) => ({
-          id: artist.id,
-          nickname: artist.nickname,
-          firstName: artist.first_name,
-          lastName1: artist.last_name1,
-          lastName2: artist.last_name2,
-          avatarUrl: getArtistAvatarUrl({
-            artistNickname: artist.nickname,
-          }),
-          description: artist.description,
-          instagram_username: artist.instagram_username,
-          soundcloud_url: artist.soundcloud_url,
-          beatport_url: artist.beatport_url,
-          role: artist.role,
-        }));
+        const artistsWithUrls = await Promise.all(
+          data.map(async (artist) => ({
+            id: artist.id,
+            nickname: artist.nickname,
+            firstName: artist.first_name,
+            lastName1: artist.last_name1,
+            lastName2: artist.last_name2,
+            avatarUrl: await getArtistAvatarUrl({
+              artistNickname: artist.nickname,
+            }),
+            description: artist.description,
+            instagram_username: artist.instagram_username,
+            soundcloud_url: artist.soundcloud_url,
+            beatport_url: artist.beatport_url,
+            role: artist.role,
+            is_active: artist.is_active,
+          }))
+        );
 
         setArtists(artistsWithUrls);
       } catch (e) {
@@ -40,10 +49,13 @@ export function useArtists() {
       } finally {
         setIsLoading(false);
       }
-    }
+    },
+    []
+  );
 
-    fetchArtists();
-  }, []);
+  useEffect(() => {
+    fetchArtists({ includeInactive });
+  }, [fetchArtists, includeInactive]);
 
-  return { artists, isLoading, error };
+  return { artists, isLoading, error, refetch: fetchArtists };
 }

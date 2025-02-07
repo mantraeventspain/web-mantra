@@ -76,16 +76,18 @@ export function useEventLineupById(eventId: string | null) {
 
         if (lineupError) throw lineupError;
 
-        const lineupWithUrls = lineupData.map((item) => ({
-          ...item.artists,
-          isHeadliner: item.is_headliner,
-          performanceOrder: item.performance_order,
-          startTime: item.start_time,
-          endTime: item.end_time,
-          avatarUrl: getArtistAvatarUrl({
-            artistNickname: item.artists?.nickname || "",
-          }),
-        }));
+        const lineupWithUrls = await Promise.all(
+          lineupData.map(async (item) => ({
+            ...item.artists,
+            isHeadliner: item.is_headliner,
+            performanceOrder: item.performance_order,
+            startTime: item.start_time,
+            endTime: item.end_time,
+            avatarUrl: await getArtistAvatarUrl({
+              artistNickname: item.artists?.nickname || "",
+            }),
+          }))
+        );
 
         setEventData({
           event: event

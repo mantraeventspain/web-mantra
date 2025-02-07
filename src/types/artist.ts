@@ -10,4 +10,5 @@ export interface Artist {
   soundcloud_url: string | null;
   beatport_url: string | null;
   role: string | null;
+  is_active: boolean;
 }

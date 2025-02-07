@@ -59,8 +59,8 @@ export const FeaturedTrack = () => {
       animate={{ opacity: 1, y: 0 }}
       className="relative bg-gradient-to-br from-mantra-blue/40 to-black/60 rounded-xl p-8 backdrop-blur-sm border border-mantra-gold/20"
     >
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <span className="bg-mantra-gold px-6 py-2 rounded-full text-black text-sm font-bold tracking-wider uppercase">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-4 flex justify-center">
+        <span className="bg-mantra-gold px-4 sm:px-6 py-2 rounded-full text-black text-xs sm:text-sm font-bold tracking-wider uppercase whitespace-nowrap">
           Track Destacado
         </span>
       </div>
@@ -99,7 +99,7 @@ export const FeaturedTrack = () => {
           {/* Waveform */}
           <div
             ref={waveformRef}
-            className="w-full rounded-lg overflow-hidden bg-black/30 backdrop-blur-sm"
+            className="w-full rounded-lg overflow-hidden"
           />
 
           {/* Botón de Beatport */}

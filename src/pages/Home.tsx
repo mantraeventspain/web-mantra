@@ -9,13 +9,14 @@ import { PastEvents } from "../components/home/PastEvents";
 export const Home = () => {
   const { url: videoUrl, isLoading } = usePublicUrl(
     "media",
-    "videos/pecope2.mp4"
+    "videos/intro.mp4"
   );
 
   return (
-    <div className="relative">
-      {/* Hero Section con video */}
+    <div className="relative min-h-screen">
+      {/* Video section sin gradientes */}
       <div className="relative min-h-screen">
+        {/* Contenedor del video */}
         <div className="absolute inset-0 w-full h-screen">
           <video
             autoPlay
@@ -29,7 +30,6 @@ export const Home = () => {
               <source src={videoUrl} type="video/mp4" />
             )}
           </video>
-          <div className="absolute inset-0 bg-black/50" />
         </div>
 
         <motion.div
@@ -51,28 +51,38 @@ export const Home = () => {
         </motion.div>
       </div>
 
-      {/* Secciones animadas */}
-      <AnimatedSection delay={0.2} className="pt-10">
-        <div id="lineup">
-          <EventLineup />
+      {/* Contenido adicional con gradientes */}
+      <div className="relative bg-gradient-to-b from-black via-mantra-darkGold/10 to-black">
+        {/* Gradiente decorativo */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-radial from-mantra-gold/20 via-black/95 to-black">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,166,87,0.15),rgba(15,26,36,0.95)_50%,rgba(0,0,0,1)_100%)]" />
+          </div>
         </div>
-      </AnimatedSection>
 
-      <AnimatedSection delay={0.2}>
-        <div className="container mx-auto px-4">
-          <FeaturedTrack />
-        </div>
-      </AnimatedSection>
+        {/* Secciones animadas */}
+        <AnimatedSection delay={0.2} className="pt-10">
+          <div id="lineup">
+            <EventLineup />
+          </div>
+        </AnimatedSection>
 
-      <AnimatedSection delay={0.2}>
-        <PastEvents />
-      </AnimatedSection>
+        <AnimatedSection delay={0.2}>
+          <div className="container mx-auto px-4">
+            <FeaturedTrack />
+          </div>
+        </AnimatedSection>
 
-      <AnimatedSection delay={0.2}>
-        <div id="artistas">
-          <ArtistShowcase />
-        </div>
-      </AnimatedSection>
+        <AnimatedSection delay={0.2}>
+          <PastEvents />
+        </AnimatedSection>
+
+        <AnimatedSection delay={0.2}>
+          <div id="artistas">
+            <ArtistShowcase />
+          </div>
+        </AnimatedSection>
+      </div>
     </div>
   );
 };

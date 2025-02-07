@@ -17,6 +17,7 @@ export type Database = {
           first_name: string | null
           id: string
           instagram_username: string | null
+          is_active: boolean
           last_name1: string | null
           last_name2: string | null
           nickname: string
@@ -31,6 +32,7 @@ export type Database = {
           first_name?: string | null
           id?: string
           instagram_username?: string | null
+          is_active?: boolean
           last_name1?: string | null
           last_name2?: string | null
           nickname: string
@@ -45,6 +47,7 @@ export type Database = {
           first_name?: string | null
           id?: string
           instagram_username?: string | null
+          is_active?: boolean
           last_name1?: string | null
           last_name2?: string | null
           nickname?: string
@@ -264,6 +267,30 @@ export type Database = {
           price?: number
           stock?: number
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      site_config: {
+        Row: {
+          created_at: string | null
+          id: string
+          key: string
+          updated_at: string | null
+          value: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          key: string
+          updated_at?: string | null
+          value: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          key?: string
+          updated_at?: string | null
+          value?: string
         }
         Relationships: []
       }

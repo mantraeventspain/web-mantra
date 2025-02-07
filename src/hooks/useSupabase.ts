@@ -73,7 +73,8 @@ export function usePublicUrl(bucket: string, path: string) {
         const { data } = supabase.storage.from(bucket).getPublicUrl(path);
 
         if (data?.publicUrl) {
-          setUrl(data.publicUrl);
+          const versionedUrl = `${data.publicUrl}?v=${Date.now()}`;
+          setUrl(versionedUrl);
         }
       } catch (e) {
         setError(e instanceof Error ? e : new Error("Error al obtener la URL"));

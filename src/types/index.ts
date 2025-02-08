@@ -1,12 +1,10 @@
 export interface Event {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   date: string;
   location: string;
-  imageUrl: string;
-  price: number;
-  ticketsAvailable: number;
+  imageUrl: string | null;
 }
 
 export interface Product {
@@ -22,5 +20,5 @@ export interface Product {
 export interface CartItem {
   id: string;
   quantity: number;
-  type: 'event' | 'product';
+  type: "event" | "product";
 }

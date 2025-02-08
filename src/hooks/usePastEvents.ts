@@ -5,7 +5,10 @@ import type { Database } from "../types/database.types";
 
 type Event = Database["public"]["Tables"]["events"]["Row"] & {
   imageUrl: string | null | undefined;
-  galleryImages: string[];
+  galleryImages: {
+    thumbnail: string | null;
+    originalPath: string;
+  }[];
 };
 
 export function usePastEvents() {
@@ -43,7 +46,7 @@ export function usePastEvents() {
                 ...event,
                 imageUrl,
                 galleryImages: galleryUrls,
-              };
+              } as Event;
             } catch (dropboxError) {
               console.error(
                 `Error al obtener imágenes para ${event.title}:`,
@@ -56,7 +59,7 @@ export function usePastEvents() {
                       .data.publicUrl
                   : null,
                 galleryImages: [],
-              };
+              } as Event;
             }
           })
         );

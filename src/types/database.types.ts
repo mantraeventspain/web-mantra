@@ -134,8 +134,6 @@ export type Database = {
           id: string
           image_url: string | null
           location: string
-          price: number
-          tickets_available: number
           title: string
           updated_at: string | null
         }
@@ -146,8 +144,6 @@ export type Database = {
           id?: string
           image_url?: string | null
           location: string
-          price: number
-          tickets_available: number
           title: string
           updated_at?: string | null
         }
@@ -158,8 +154,6 @@ export type Database = {
           id?: string
           image_url?: string | null
           location?: string
-          price?: number
-          tickets_available?: number
           title?: string
           updated_at?: string | null
         }

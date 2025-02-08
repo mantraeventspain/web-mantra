@@ -98,8 +98,6 @@ export function useEventLineupById(eventId: string | null) {
                 date: event.date,
                 location: event.location,
                 imageUrl: event.image_url || "",
-                price: event.price,
-                ticketsAvailable: event.tickets_available,
               }
             : null,
           lineup: lineupWithUrls as LineupArtist[],

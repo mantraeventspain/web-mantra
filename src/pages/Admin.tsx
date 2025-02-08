@@ -5,6 +5,7 @@ import { SiteConfigManager } from "../components/admin/SiteConfigManager";
 import { ArtistManager } from "../components/admin/ArtistManager";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { EventManager } from "../components/admin/EventManager";
 
 interface AccordionSectionProps {
   title: string;
@@ -76,6 +77,14 @@ export const Admin = () => {
           onToggle={() => toggleSection("artists")}
         >
           <ArtistManager />
+        </AccordionSection>
+
+        <AccordionSection
+          title="Gestionar Eventos"
+          isOpen={openSection === "events"}
+          onToggle={() => toggleSection("events")}
+        >
+          <EventManager />
         </AccordionSection>
 
         <AccordionSection

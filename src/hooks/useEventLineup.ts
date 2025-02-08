@@ -11,33 +11,32 @@ interface LineupArtist extends Artist {
   endTime: string | null;
 }
 
-interface EventWithLineup {
-  event: Event | null;
-  lineup: LineupArtist[];
-}
-
 export function useEventLineup() {
-  const [eventData, setEventData] = useState<EventWithLineup>({
-    event: null,
-    lineup: [],
-  });
+  const [eventData, setEventData] = useState<{
+    event: Event | null;
+    lineup: LineupArtist[];
+  }>({ event: null, lineup: [] });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    let isMounted = true;
+    fetchEventAndLineup();
+
     async function fetchEventAndLineup() {
       try {
-        // Primero obtenemos el evento más reciente
+        const today = new Date().toISOString();
         const { data: latestEvent, error: eventError } = await supabase
           .from("events")
           .select("*")
+          .gte("date", today)
+          .eq("is_active", true)
           .order("date")
           .limit(1)
           .single();
 
         if (eventError) throw eventError;
 
-        // Luego obtenemos el line-up de ese evento
         const { data: lineupData, error: lineupError } = await supabase
           .from("event_artists")
           .select(
@@ -54,39 +53,52 @@ export function useEventLineup() {
 
         if (lineupError) throw lineupError;
 
-        const lineupWithUrls = lineupData.map((item) => ({
-          ...item.artists,
-          isHeadliner: item.is_headliner,
-          performanceOrder: item.performance_order,
-          startTime: item.start_time,
-          endTime: item.end_time,
-          avatarUrl: getArtistAvatarUrl({
-            artistNickname: item.artists?.nickname || "",
-          }),
-        }));
+        const lineupWithUrls = await Promise.all(
+          lineupData.map(async (item) => ({
+            ...item.artists,
+            isHeadliner: item.is_headliner,
+            performanceOrder: item.performance_order,
+            startTime: item.start_time,
+            endTime: item.end_time,
+            avatarUrl: await getArtistAvatarUrl({
+              artistNickname: item.artists?.nickname || "",
+            }),
+          }))
+        );
 
-        setEventData({
-          event: {
-            id: latestEvent.id,
-            title: latestEvent.title,
-            description: latestEvent.description || "",
-            date: latestEvent.date,
-            location: latestEvent.location,
-            imageUrl: latestEvent.image_url || "",
-            price: latestEvent.price,
-            ticketsAvailable: latestEvent.tickets_available,
-          },
-          lineup: lineupWithUrls as LineupArtist[],
-        });
+        if (isMounted) {
+          setEventData({
+            event: {
+              id: latestEvent.id,
+              title: latestEvent.title,
+              description: latestEvent.description,
+              date: latestEvent.date,
+              location: latestEvent.location,
+              imageUrl: latestEvent.image_url,
+            },
+            lineup: lineupWithUrls as LineupArtist[],
+          });
+        }
       } catch (e) {
-        setError(e instanceof Error ? e : new Error("Error desconocido"));
+        if (isMounted) {
+          setError(e instanceof Error ? e : new Error("Error desconocido"));
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
-    fetchEventAndLineup();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  return { ...eventData, isLoading, error };
+  return {
+    event: eventData.event,
+    lineup: eventData.lineup,
+    isLoading,
+    error,
+  };
 }

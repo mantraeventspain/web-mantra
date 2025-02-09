@@ -14,6 +14,7 @@ export type Database = {
           beatport_url: string | null
           created_at: string | null
           description: string | null
+          display_order: number
           first_name: string | null
           id: string
           instagram_username: string | null
@@ -30,6 +31,7 @@ export type Database = {
           beatport_url?: string | null
           created_at?: string | null
           description?: string | null
+          display_order: number
           first_name?: string | null
           id?: string
           instagram_username?: string | null
@@ -46,6 +48,7 @@ export type Database = {
           beatport_url?: string | null
           created_at?: string | null
           description?: string | null
+          display_order?: number
           first_name?: string | null
           id?: string
           instagram_username?: string | null

@@ -74,6 +74,57 @@ export const NewsletterManager = () => {
     window.URL.revokeObjectURL(url);
   };
 
+  const sendNewsletter = async () => {
+    if (
+      !window.confirm(
+        "¿Estás seguro de enviar la newsletter a todos los suscriptores?"
+      )
+    )
+      return;
+
+    try {
+      setIsLoading(true);
+      const batchSize = 50; // Enviar en lotes de 50 emails
+      const emails = subscribers.map((sub) => sub.email);
+      const batches = [];
+
+      // Dividir emails en lotes
+      for (let i = 0; i < emails.length; i += batchSize) {
+        batches.push(emails.slice(i, i + batchSize));
+      }
+
+      // Procesar cada lote
+      for (const batch of batches) {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-newsletter`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({
+              subscribers: batch,
+            }),
+          }
+        );
+
+        if (!response.ok) throw new Error("Error al enviar la newsletter");
+
+        // Esperar un breve momento entre lotes para evitar sobrecarga
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+
+      alert("Newsletter enviada correctamente");
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : "Error al enviar la newsletter"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -97,6 +148,14 @@ export const NewsletterManager = () => {
         >
           <Download className="w-5 h-5" />
           Exportar CSV
+        </button>
+        <button
+          onClick={sendNewsletter}
+          disabled={isLoading || subscribers.length === 0}
+          className="flex items-center gap-2 px-4 py-2 bg-mantra-gold hover:bg-mantra-darkGold text-black rounded-lg transition-colors disabled:opacity-50"
+        >
+          <Mail className="w-5 h-5" />
+          Enviar Newsletter
         </button>
       </div>
 

@@ -6,6 +6,7 @@ interface SocialLinks {
   instagram_url: string;
   soundcloud_url: string;
   tickets_url: string;
+  beatport_url: string;
 }
 
 export const SiteConfigManager = () => {
@@ -14,6 +15,7 @@ export const SiteConfigManager = () => {
     instagram_url: "",
     soundcloud_url: "",
     tickets_url: "",
+    beatport_url: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +34,7 @@ export const SiteConfigManager = () => {
           "instagram_url",
           "soundcloud_url",
           "tickets_url",
+          "beatport_url",
         ]);
 
       if (error) throw error;
@@ -123,6 +126,21 @@ export const SiteConfigManager = () => {
             }
             className="w-full px-4 py-2 bg-black/30 border border-mantra-gold/20 rounded-lg text-white"
             placeholder="https://soundcloud.com/..."
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            URL de Beatport
+          </label>
+          <input
+            type="url"
+            value={links.beatport_url}
+            onChange={(e) =>
+              setLinks((prev) => ({ ...prev, beatport_url: e.target.value }))
+            }
+            className="w-full px-4 py-2 bg-black/30 border border-mantra-gold/20 rounded-lg text-white"
+            placeholder="https://beatport.com/..."
           />
         </div>
 

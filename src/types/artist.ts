@@ -12,4 +12,5 @@ export interface Artist {
   beatport_url: string | null;
   role: string | null;
   is_active: boolean;
+  display_order: number;
 }

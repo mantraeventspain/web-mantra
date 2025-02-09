@@ -14,7 +14,7 @@ export function useArtists({
     async ({ includeInactive = false }: { includeInactive?: boolean } = {}) => {
       try {
         setIsLoading(true);
-        let query = supabase.from("artists").select("*").order("nickname");
+        let query = supabase.from("artists").select("*").order("display_order");
 
         if (!includeInactive) {
           query = query.eq("is_active", true);
@@ -41,6 +41,7 @@ export function useArtists({
             role: artist.role,
             normalized_nickname: artist.normalized_nickname,
             is_active: artist.is_active,
+            display_order: artist.display_order,
           }))
         );
 

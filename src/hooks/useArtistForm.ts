@@ -15,7 +15,7 @@ interface FormStatus {
 }
 
 // Definimos un tipo para los valores que puede tener un artista
-type ArtistValue = string | null | undefined | boolean;
+type ArtistValue = string | null | undefined | boolean | number;
 
 export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
   const [formData, setFormData] = useState({
@@ -57,7 +57,9 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
     role: "role",
   };
 
-  const normalizeValue = (value: ArtistValue): string | null | boolean => {
+  const normalizeValue = (
+    value: ArtistValue
+  ): string | null | boolean | number => {
     // Convierte cadenas vacías a null para la comparación
     if (value === "" || value === undefined) return null;
     return value;
@@ -79,7 +81,7 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
       }
 
       return acc;
-    }, {} as Record<string, string | null | boolean>);
+    }, {} as Record<string, string | null | boolean | number>);
 
     return normalizedData;
   };

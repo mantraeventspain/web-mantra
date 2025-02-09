@@ -1,5 +1,6 @@
-import { Facebook, Instagram, ArrowUp, Users } from "lucide-react";
+import { Facebook, Instagram, Users, ArrowUp } from "lucide-react";
 import { FaSoundcloud } from "react-icons/fa";
+import { SiBeatport } from "react-icons/si";
 import { useSiteConfig } from "../../hooks/useSiteConfig";
 import { NewsletterForm } from "../newsletter/NewsletterForm";
 
@@ -31,10 +32,7 @@ export const Footer = () => {
             </h4>
             <div className="flex space-x-4">
               <a
-                href={
-                  config.facebook_url ||
-                  "https://www.facebook.com/p/Mantra-events-61557011395289/"
-                }
+                href={config.facebook_url}
                 className="text-gray-300 hover:text-mantra-gold transition-colors duration-200"
                 aria-label="Síguenos en Facebook"
                 target="_blank"
@@ -43,10 +41,7 @@ export const Footer = () => {
                 <Facebook className="w-6 h-6" />
               </a>
               <a
-                href={
-                  config.instagram_url ||
-                  "https://www.instagram.com/mantra_event/"
-                }
+                href={config.instagram_url}
                 className="text-gray-300 hover:text-mantra-gold transition-colors duration-200"
                 aria-label="Síguenos en Instagram"
                 target="_blank"
@@ -55,16 +50,22 @@ export const Footer = () => {
                 <Instagram className="w-6 h-6" />
               </a>
               <a
-                href={
-                  config.soundcloud_url ||
-                  "https://soundcloud.com/mantra-parties"
-                }
+                href={config.soundcloud_url}
                 className="text-gray-300 hover:text-mantra-gold transition-colors duration-200"
                 aria-label="Síguenos en Soundcloud"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <FaSoundcloud className="text-2xl" />
+                <FaSoundcloud className="w-6 h-6" />
+              </a>
+              <a
+                href={config.beatport_url}
+                className="text-gray-300 hover:text-mantra-gold transition-colors duration-200"
+                aria-label="Síguenos en Beatport"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <SiBeatport className="w-6 h-6" />
               </a>
             </div>
           </div>

@@ -78,7 +78,7 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
 
     try {
       // Validaciones
-      if (!formData.nickname.match(/^[a-zA-Z0-9_\s-]+$/)) {
+      if (!formData.nickname.match(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9_\s-]+$/)) {
         throw new Error(
           "El nickname solo puede contener letras, números, guiones, guiones bajos y espacios"
         );

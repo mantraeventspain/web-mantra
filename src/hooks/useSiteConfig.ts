@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 interface SiteConfig {
-  tickets_url: string;
+  tickets_url?: string;
 }
 
 export function useSiteConfig() {

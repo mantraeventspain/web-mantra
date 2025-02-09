@@ -63,7 +63,7 @@ export const Header = () => {
 
       {/* Botón de tickets mejorado */}
       <div className="absolute top-8 right-8 hidden md:block">
-        {config.tickets_url.startsWith("http") ? (
+        {config.tickets_url?.startsWith("http") ? (
           <a
             href={config.tickets_url}
             target="_blank"
@@ -78,7 +78,7 @@ export const Header = () => {
           </a>
         ) : (
           <Link
-            to={config.tickets_url}
+            to={config.tickets_url ?? ""}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative inline-flex items-center px-6 py-2 overflow-hidden rounded-full bg-transparent"

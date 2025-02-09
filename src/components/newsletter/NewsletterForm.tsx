@@ -1,43 +1,21 @@
 import { useState } from "react";
 import { Mail } from "lucide-react";
-import { supabase } from "../../lib/supabase";
+import { useNewsletter } from "../../hooks/useNewsletter";
 
 export const NewsletterForm = () => {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<{
-    isLoading: boolean;
-    error: string | null;
-    success: boolean;
-  }>({
-    isLoading: false,
-    error: null,
-    success: false,
-  });
+  const { subscribe, isLoading, error } = useNewsletter();
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus({ isLoading: true, error: null, success: false });
 
-    try {
-      const { error } = await supabase
-        .from("newsletter_subscribers")
-        .insert([{ email }]);
+    const result = await subscribe(email);
 
-      if (error) throw error;
-
-      setStatus({ isLoading: false, error: null, success: true });
+    if (result) {
+      setSuccess(true);
       setEmail("");
-
-      setTimeout(() => {
-        setStatus((prev) => ({ ...prev, success: false }));
-      }, 3000);
-    } catch (err) {
-      console.error(err);
-      setStatus({
-        isLoading: false,
-        error: "Este email ya está registrado o es inválido",
-        success: false,
-      });
+      setTimeout(() => setSuccess(false), 3000);
     }
   };
 
@@ -62,15 +40,15 @@ export const NewsletterForm = () => {
 
       <button
         type="submit"
-        disabled={status.isLoading}
+        disabled={isLoading}
         className="w-full px-4 py-2 bg-mantra-gold hover:bg-mantra-darkGold text-black rounded-lg transition-colors disabled:opacity-50"
       >
-        {status.isLoading ? "Suscribiendo..." : "Suscribirse"}
+        {isLoading ? "Suscribiendo..." : "Suscribirse"}
       </button>
 
-      {status.error && <p className="text-red-500 text-sm">{status.error}</p>}
+      {error && <p className="text-red-500 text-sm">{error}</p>}
 
-      {status.success && (
+      {success && (
         <p className="text-green-500 text-sm">¡Gracias por suscribirte!</p>
       )}
     </form>

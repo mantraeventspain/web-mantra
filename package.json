@@ -11,6 +11,7 @@
     "update-types": "supabase gen types typescript --project-id jilbqqlksrvimjkvkhlj > src/types/database.types.ts"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
     "@supabase/supabase-js": "^2.39.7",
     "@wavesurfer/react": "^1.0.9",
     "dropbox": "^10.34.0",

@@ -6,6 +6,7 @@ interface SiteConfig {
   facebook_url?: string;
   instagram_url?: string;
   soundcloud_url?: string;
+  beatport_url?: string;
 }
 
 export function useSiteConfig() {
@@ -14,6 +15,7 @@ export function useSiteConfig() {
     facebook_url: "https://www.facebook.com/p/Mantra-events-61557011395289/",
     instagram_url: "https://www.instagram.com/mantra_event/",
     soundcloud_url: "https://soundcloud.com/mantra-parties",
+    beatport_url: "https://beatport.com/mantra-events",
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -29,6 +31,7 @@ export function useSiteConfig() {
             "facebook_url",
             "instagram_url",
             "soundcloud_url",
+            "beatport_url",
           ]);
 
         if (error) throw error;

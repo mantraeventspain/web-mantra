@@ -4,8 +4,10 @@ import { useArtists } from "../../hooks/useArtists";
 import { ArtistForm } from "./ArtistForm";
 import { Artist } from "../../types/artist";
 import { Edit, UserPlus, UserX, UserCheck } from "lucide-react";
+import { ArtistOrderManager } from "./ArtistOrderManager";
 
 export const ArtistManager = () => {
+  const [activeTab, setActiveTab] = useState<"list" | "order">("list");
   const [showInactive, setShowInactive] = useState(false);
   const { artists, isLoading, error, refetch } = useArtists({
     includeInactive: showInactive,
@@ -65,139 +67,170 @@ export const ArtistManager = () => {
     <>
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-mantra-gold hover:bg-mantra-darkGold text-black rounded-lg transition-colors"
-          >
-            <UserPlus className="w-5 h-5" />
-            Nuevo Artista
-          </button>
-          <label className="flex items-center gap-2 text-gray-300">
-            <input
-              type="checkbox"
-              checked={showInactive}
-              onChange={(e) => setShowInactive(e.target.checked)}
-              className="form-checkbox h-4 w-4 text-mantra-gold rounded border-mantra-gold/20 bg-black/30"
-            />
-            Mostrar inactivos
-          </label>
+          <div className="flex rounded-lg overflow-hidden bg-black/20">
+            <button
+              onClick={() => setActiveTab("list")}
+              className={`px-4 py-2 ${
+                activeTab === "list"
+                  ? "bg-mantra-gold text-black"
+                  : "text-gray-300 hover:text-white"
+              }`}
+            >
+              Lista
+            </button>
+            <button
+              onClick={() => setActiveTab("order")}
+              className={`px-4 py-2 ${
+                activeTab === "order"
+                  ? "bg-mantra-gold text-black"
+                  : "text-gray-300 hover:text-white"
+              }`}
+            >
+              Ordenar
+            </button>
+          </div>
+          {activeTab === "list" && (
+            <>
+              <button
+                onClick={() => setShowForm(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-mantra-gold hover:bg-mantra-darkGold text-black rounded-lg transition-colors"
+              >
+                <UserPlus className="w-5 h-5" />
+                Nuevo Artista
+              </button>
+              <label className="flex items-center gap-2 text-gray-300">
+                <input
+                  type="checkbox"
+                  checked={showInactive}
+                  onChange={(e) => setShowInactive(e.target.checked)}
+                  className="form-checkbox h-4 w-4 text-mantra-gold rounded border-mantra-gold/20 bg-black/30"
+                />
+                Mostrar inactivos
+              </label>
+            </>
+          )}
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left border-b border-mantra-gold/20">
-              <th className="px-4 py-2 text-mantra-gold">Artista</th>
-              <th className="px-4 py-2 text-mantra-gold">Rol</th>
-              <th className="px-4 py-2 text-mantra-gold">Estado</th>
-              <th className="px-4 py-2 text-mantra-gold">Redes Sociales</th>
-              <th className="px-4 py-2 text-mantra-gold">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {artists.map((artist) => (
-              <tr
-                key={artist.id}
-                className={`border-b border-mantra-gold/10 ${
-                  !artist.is_active ? "opacity-60" : ""
-                }`}
-              >
-                <td className="px-4 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-mantra-blue flex-shrink-0">
-                      {artist.avatarUrl ? (
-                        <img
-                          src={artist.avatarUrl}
-                          alt={artist.nickname}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <span className="text-xl text-mantra-gold">
-                            {artist.nickname.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium text-white">
-                        {artist.nickname}
-                      </p>
-                      <p className="text-sm text-gray-400">
-                        {artist.firstName} {artist.lastName1} {artist.lastName2}
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-4 py-4 text-gray-300">
-                  {artist.role || "-"}
-                </td>
-                <td className="px-4 py-4 text-gray-300">
-                  <span
-                    className={`px-2 py-1 rounded text-sm ${
-                      artist.is_active
-                        ? "bg-green-500/10 text-green-400"
-                        : "bg-red-500/10 text-red-400"
-                    }`}
-                  >
-                    {artist.is_active ? "Activo" : "Inactivo"}
-                  </span>
-                </td>
-                <td className="px-4 py-4">
-                  <div className="flex gap-2">
-                    {artist.instagram_username && (
-                      <span className="px-2 py-1 bg-mantra-gold/10 text-mantra-gold rounded text-sm">
-                        Instagram
-                      </span>
-                    )}
-                    {artist.soundcloud_url && (
-                      <span className="px-2 py-1 bg-mantra-gold/10 text-mantra-gold rounded text-sm">
-                        SoundCloud
-                      </span>
-                    )}
-                    {artist.beatport_url && (
-                      <span className="px-2 py-1 bg-mantra-gold/10 text-mantra-gold rounded text-sm">
-                        Beatport
-                      </span>
-                    )}
-                  </div>
-                </td>
-                <td className="px-4 py-4">
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setSelectedArtist(artist);
-                        setShowForm(true);
-                      }}
-                      className="p-2 text-gray-400 hover:text-white transition-colors"
-                      title="Editar"
-                    >
-                      <Edit className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => handleStatusChange(artist)}
-                      disabled={isDeleting}
-                      className={`p-2 transition-colors ${
-                        artist.is_active
-                          ? "text-gray-400 hover:text-red-500"
-                          : "text-gray-400 hover:text-green-500"
-                      }`}
-                      title={artist.is_active ? "Dar de baja" : "Dar de alta"}
-                    >
-                      {artist.is_active ? (
-                        <UserX className="w-5 h-5" />
-                      ) : (
-                        <UserCheck className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-                </td>
+      {activeTab === "list" ? (
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="text-left border-b border-mantra-gold/20">
+                <th className="px-4 py-2 text-mantra-gold">Artista</th>
+                <th className="px-4 py-2 text-mantra-gold">Rol</th>
+                <th className="px-4 py-2 text-mantra-gold">Estado</th>
+                <th className="px-4 py-2 text-mantra-gold">Redes Sociales</th>
+                <th className="px-4 py-2 text-mantra-gold">Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {artists.map((artist) => (
+                <tr
+                  key={artist.id}
+                  className={`border-b border-mantra-gold/10 ${
+                    !artist.is_active ? "opacity-60" : ""
+                  }`}
+                >
+                  <td className="px-4 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-mantra-blue flex-shrink-0">
+                        {artist.avatarUrl ? (
+                          <img
+                            src={artist.avatarUrl}
+                            alt={artist.nickname}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-xl text-mantra-gold">
+                              {artist.nickname.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium text-white">
+                          {artist.nickname}
+                        </p>
+                        <p className="text-sm text-gray-400">
+                          {artist.firstName} {artist.lastName1}{" "}
+                          {artist.lastName2}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4 text-gray-300">
+                    {artist.role || "-"}
+                  </td>
+                  <td className="px-4 py-4 text-gray-300">
+                    <span
+                      className={`px-2 py-1 rounded text-sm ${
+                        artist.is_active
+                          ? "bg-green-500/10 text-green-400"
+                          : "bg-red-500/10 text-red-400"
+                      }`}
+                    >
+                      {artist.is_active ? "Activo" : "Inactivo"}
+                    </span>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex gap-2">
+                      {artist.instagram_username && (
+                        <span className="px-2 py-1 bg-mantra-gold/10 text-mantra-gold rounded text-sm">
+                          Instagram
+                        </span>
+                      )}
+                      {artist.soundcloud_url && (
+                        <span className="px-2 py-1 bg-mantra-gold/10 text-mantra-gold rounded text-sm">
+                          SoundCloud
+                        </span>
+                      )}
+                      {artist.beatport_url && (
+                        <span className="px-2 py-1 bg-mantra-gold/10 text-mantra-gold rounded text-sm">
+                          Beatport
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-4 py-4">
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setSelectedArtist(artist);
+                          setShowForm(true);
+                        }}
+                        className="p-2 text-gray-400 hover:text-white transition-colors"
+                        title="Editar"
+                      >
+                        <Edit className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => handleStatusChange(artist)}
+                        disabled={isDeleting}
+                        className={`p-2 transition-colors ${
+                          artist.is_active
+                            ? "text-gray-400 hover:text-red-500"
+                            : "text-gray-400 hover:text-green-500"
+                        }`}
+                        title={artist.is_active ? "Dar de baja" : "Dar de alta"}
+                      >
+                        {artist.is_active ? (
+                          <UserX className="w-5 h-5" />
+                        ) : (
+                          <UserCheck className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <ArtistOrderManager artists={artists} onReorder={refetch} />
+      )}
 
       {showForm && (
         <ArtistForm

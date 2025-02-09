@@ -1,17 +1,17 @@
 import { supabase } from "../lib/supabase";
 
 interface ArtistAvatarOptions {
-  artistNickname: string;
+  normalizedNickname: string;
 }
 
 export async function getArtistAvatarUrl({
-  artistNickname,
+  normalizedNickname,
 }: ArtistAvatarOptions) {
   try {
-    // Listar archivos en el directorio del artista
+    // Usar normalizedNickname para la ruta de archivos
     const { data: files, error } = await supabase.storage
       .from("media")
-      .list(`artist/${artistNickname}`, {
+      .list(`artist/${normalizedNickname}`, {
         limit: 10,
         offset: 0,
         sortBy: { column: "name", order: "asc" },
@@ -30,7 +30,7 @@ export async function getArtistAvatarUrl({
     }
 
     // Construir el path completo con la extensión correcta
-    const path = `artist/${artistNickname}/${avatarFile.name}`;
+    const path = `artist/${normalizedNickname}/${avatarFile.name}`;
     const { data } = supabase.storage.from("media").getPublicUrl(path);
 
     return data?.publicUrl || null;
@@ -42,60 +42,24 @@ export async function getArtistAvatarUrl({
 
 export async function uploadArtistAvatar(
   file: File,
-  artistNickname: string
+  normalizedNickname: string
 ): Promise<string | null> {
   try {
-    // Subir el nuevo avatar con nombre temporal
     const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const tempFileName = `avatar_new_${Date.now()}.${extension}`;
-    const tempPath = `artist/${artistNickname}/${tempFileName}`;
+    const fileName = `avatar.${extension}`;
+    const path = `artist/${normalizedNickname}/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from("media")
-      .upload(tempPath, file, {
-        cacheControl: "3600",
-        contentType: file.type,
+      .upload(path, file, {
+        upsert: true,
       });
 
     if (uploadError) throw uploadError;
 
-    // Buscar y eliminar el avatar anterior
-    const { data: files, error: listError } = await supabase.storage
-      .from("media")
-      .list(`artist/${artistNickname}`);
-
-    if (listError) throw listError;
-
-    const oldAvatar = files?.find((file) => file.name.startsWith("avatar."));
-    if (oldAvatar) {
-      const { error: deleteError } = await supabase.storage
-        .from("media")
-        .remove([`artist/${artistNickname}/${oldAvatar.name}`]);
-
-      if (deleteError) throw deleteError;
-    }
-
-    // Renombrar el nuevo avatar
-    const finalPath = `artist/${artistNickname}/avatar.${extension}`;
-    const { error: moveError } = await supabase.storage
-      .from("media")
-      .move(tempPath, finalPath);
-
-    if (moveError) throw moveError;
-
-    return finalPath;
+    return fileName;
   } catch (error) {
-    console.error("Error in uploadArtistAvatar:", error);
-    // Intentar limpiar el archivo temporal en caso de error
-    try {
-      const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const tempFileName = `avatar_new_${Date.now()}.${extension}`;
-      const tempPath = `artist/${artistNickname}/${tempFileName}`;
-
-      await supabase.storage.from("media").remove([tempPath]);
-    } catch (cleanupError) {
-      console.error("Error cleaning up temporary file:", cleanupError);
-    }
+    console.error("Error uploading avatar:", error);
     return null;
   }
 }

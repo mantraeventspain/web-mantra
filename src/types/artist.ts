@@ -1,6 +1,7 @@
 export interface Artist {
   id: string;
   nickname: string;
+  normalized_nickname: string;
   firstName: string | null;
   lastName1: string | null;
   lastName2: string | null;

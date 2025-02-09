@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { uploadArtistAvatar } from "../utils/artistHelpers";
+import { normalizeNickname } from "../utils/stringUtils";
 import type { Artist } from "../types/artist";
 import type { Database } from "../types/database.types";
 
@@ -19,6 +20,7 @@ type ArtistValue = string | null | undefined | boolean;
 export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
   const [formData, setFormData] = useState({
     nickname: artist?.nickname || "",
+    normalized_nickname: artist?.normalized_nickname || "",
     firstName: artist?.firstName || "",
     lastName1: artist?.lastName1 || "",
     lastName2: artist?.lastName2 || "",
@@ -28,6 +30,13 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
     beatport_url: artist?.beatport_url || "",
     role: artist?.role || "",
   });
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      normalized_nickname: normalizeNickname(prev.nickname),
+    }));
+  }, [formData.nickname]);
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [status, setStatus] = useState<FormStatus>({
@@ -72,6 +81,14 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
 
     return normalizedData;
   };
+
+  // Actualizar el normalized_nickname cuando cambie el nickname
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      normalized_nickname: normalizeNickname(prev.nickname),
+    }));
+  }, [formData.nickname]);
 
   const handleSubmit = async () => {
     setStatus({ isLoading: true, success: {}, error: null });
@@ -143,7 +160,10 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
       // Subir avatar si existe
       let avatarSuccess = false;
       if (avatarFile) {
-        await uploadArtistAvatar(avatarFile, formData.nickname);
+        await uploadArtistAvatar(
+          avatarFile,
+          normalizeNickname(formData.nickname)
+        );
         avatarSuccess = true;
       }
 

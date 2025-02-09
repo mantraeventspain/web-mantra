@@ -32,13 +32,14 @@ export function useArtists({
             lastName1: artist.last_name1,
             lastName2: artist.last_name2,
             avatarUrl: await getArtistAvatarUrl({
-              artistNickname: artist.nickname,
+              normalizedNickname: artist.normalized_nickname,
             }),
             description: artist.description,
             instagram_username: artist.instagram_username,
             soundcloud_url: artist.soundcloud_url,
             beatport_url: artist.beatport_url,
             role: artist.role,
+            normalized_nickname: artist.normalized_nickname,
             is_active: artist.is_active,
           }))
         );

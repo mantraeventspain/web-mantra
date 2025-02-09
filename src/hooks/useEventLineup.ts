@@ -61,7 +61,7 @@ export function useEventLineup() {
             startTime: item.start_time,
             endTime: item.end_time,
             avatarUrl: await getArtistAvatarUrl({
-              artistNickname: item.artists?.nickname || "",
+              normalizedNickname: item.artists?.normalized_nickname || "",
             }),
           }))
         );

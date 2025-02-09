@@ -21,6 +21,7 @@ export type Database = {
           last_name1: string | null
           last_name2: string | null
           nickname: string
+          normalized_nickname: string
           role: string | null
           soundcloud_url: string | null
           updated_at: string | null
@@ -36,6 +37,7 @@ export type Database = {
           last_name1?: string | null
           last_name2?: string | null
           nickname: string
+          normalized_nickname: string
           role?: string | null
           soundcloud_url?: string | null
           updated_at?: string | null
@@ -51,6 +53,7 @@ export type Database = {
           last_name1?: string | null
           last_name2?: string | null
           nickname?: string
+          normalized_nickname?: string
           role?: string | null
           soundcloud_url?: string | null
           updated_at?: string | null
@@ -158,48 +161,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
-      }
-      order_items: {
-        Row: {
-          created_at: string | null
-          id: string
-          order_id: string
-          price_at_time: number
-          product_id: string
-          quantity: number
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          order_id: string
-          price_at_time: number
-          product_id: string
-          quantity: number
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          order_id?: string
-          price_at_time?: number
-          product_id?: string
-          quantity?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "order_items_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "order_items_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       orders: {
         Row: {
@@ -340,7 +301,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      unaccent: {
+        Args: {
+          "": string
+        }
+        Returns: string
+      }
+      unaccent_init: {
+        Args: {
+          "": unknown
+        }
+        Returns: unknown
+      }
     }
     Enums: {
       [_ in never]: never

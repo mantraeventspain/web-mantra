@@ -4,6 +4,7 @@ import { ArtistModal } from "./ArtistModal";
 import { motion } from "framer-motion";
 import type { Artist } from "../../types/artist.ts";
 import { SectionTitle } from "../ui/SectionTitle.tsx";
+import { ScrollableSection } from "../ui/ScrollableSection.tsx";
 
 export const ArtistShowcase = () => {
   const { artists, isLoading, error } = useArtists();
@@ -33,40 +34,42 @@ export const ArtistShowcase = () => {
     <>
       <div className="container mx-auto px-4">
         <SectionTitle title="Artistas" />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {artists.map((artist, index) => (
-            <motion.div
-              key={artist.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              onClick={() => setSelectedArtist(artist)}
-              className="group cursor-pointer"
-            >
-              <div className="relative aspect-square mb-4">
-                <div className="absolute inset-0 rounded-xl overflow-hidden group-hover:scale-95 transition-transform duration-300">
-                  {artist.avatarUrl ? (
-                    <img
-                      src={artist.avatarUrl}
-                      alt={artist.nickname}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-mantra-blue">
-                      <span className="text-4xl text-mantra-gold">
-                        {artist.nickname.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <ScrollableSection className="py-4">
+          <div className="flex gap-8 px-4">
+            {artists.map((artist, index) => (
+              <motion.div
+                key={artist.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                onClick={() => setSelectedArtist(artist)}
+                className="cursor-pointer flex-shrink-0 w-[200px] md:w-[250px]"
+              >
+                <div className="relative aspect-square mb-4">
+                  <div className="absolute inset-0 rounded-xl overflow-hidden hover:scale-95 transition-transform duration-300">
+                    {artist.avatarUrl ? (
+                      <img
+                        src={artist.avatarUrl}
+                        alt={artist.nickname}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-mantra-blue">
+                        <span className="text-4xl text-mantra-gold">
+                          {artist.nickname.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                  </div>
                 </div>
-              </div>
-              <h3 className="text-lg font-medium text-white text-center group-hover:text-mantra-gold transition-colors">
-                {artist.nickname}
-              </h3>
-            </motion.div>
-          ))}
-        </div>
+                <h3 className="text-lg font-medium text-white text-center hover:text-mantra-gold transition-colors">
+                  {artist.nickname}
+                </h3>
+              </motion.div>
+            ))}
+          </div>
+        </ScrollableSection>
       </div>
 
       <ArtistModal

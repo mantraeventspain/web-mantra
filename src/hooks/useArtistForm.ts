@@ -67,17 +67,19 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
     const normalizedData = Object.entries(data).reduce((acc, [key, value]) => {
       const dbKey = keyMapping[key] || key;
       const normalizedValue = normalizeValue(value);
-      // Solo incluimos el valor si no es null o si es un campo requerido
-      if (normalizedValue !== null || dbKey === "nickname") {
-        acc[dbKey] = normalizedValue || ""; // Aseguramos que nickname nunca sea null
+
+      // Siempre incluimos el nickname y normalized_nickname
+      if (dbKey === "nickname") {
+        acc[dbKey] = value || ""; // Usamos el valor original para nickname
+        acc["normalized_nickname"] = normalizeNickname(value || "");
       }
+      // Para otros campos, siempre los incluimos, incluso si son null
+      else if (dbKey !== "normalized_nickname") {
+        acc[dbKey] = normalizedValue;
+      }
+
       return acc;
     }, {} as Record<string, string | null | boolean>);
-
-    // Asegurarnos de que nickname siempre esté presente
-    if (!normalizedData.nickname) {
-      normalizedData.nickname = data.nickname || "";
-    }
 
     return normalizedData;
   };
@@ -125,7 +127,9 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
           const originalValue = normalizeValue(
             artist[key as keyof typeof artist]
           );
-          if (currentValue !== originalValue) {
+
+          // Incluimos el campo si ha cambiado o si es una cadena vacía (para permitir establecer null)
+          if (currentValue !== originalValue || formData[key] === "") {
             acc[key as keyof typeof formData] = formData[key];
           }
           return acc;

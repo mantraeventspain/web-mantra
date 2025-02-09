@@ -3,11 +3,17 @@ import { supabase } from "../lib/supabase";
 
 interface SiteConfig {
   tickets_url?: string;
+  facebook_url?: string;
+  instagram_url?: string;
+  soundcloud_url?: string;
 }
 
 export function useSiteConfig() {
   const [config, setConfig] = useState<SiteConfig>({
     tickets_url: "/",
+    facebook_url: "https://www.facebook.com/p/Mantra-events-61557011395289/",
+    instagram_url: "https://www.instagram.com/mantra_event/",
+    soundcloud_url: "https://soundcloud.com/mantra-parties",
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -15,7 +21,15 @@ export function useSiteConfig() {
   useEffect(() => {
     async function fetchConfig() {
       try {
-        const { data, error } = await supabase.from("site_config").select("*");
+        const { data, error } = await supabase
+          .from("site_config")
+          .select("*")
+          .in("key", [
+            "tickets_url",
+            "facebook_url",
+            "instagram_url",
+            "soundcloud_url",
+          ]);
 
         if (error) throw error;
 
@@ -27,7 +41,10 @@ export function useSiteConfig() {
           {} as SiteConfig
         );
 
-        setConfig(configObj);
+        setConfig((prevConfig) => ({
+          ...prevConfig,
+          ...configObj,
+        }));
       } catch (e) {
         setError(e instanceof Error ? e : new Error("Error desconocido"));
       } finally {

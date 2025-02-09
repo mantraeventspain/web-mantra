@@ -1,10 +1,10 @@
-import { motion } from "framer-motion";
-import { usePublicUrl } from "../hooks/useSupabase";
 import { AnimatedSection } from "../components/home/AnimatedSection";
 import { ArtistShowcase } from "../components/home/ArtistShowcase";
 import { EventLineup } from "../components/events/EventLineup";
 import { FeaturedTrack } from "../components/home/FeaturedTrack";
 import { PastEvents } from "../components/home/PastEvents";
+import { usePublicUrl } from "../hooks/useSupabase";
+import { FloatingTicketButton } from "../components/layout/FloatingTicketButton";
 
 export const Home = () => {
   const { url: videoUrl, isLoading } = usePublicUrl(
@@ -31,24 +31,6 @@ export const Home = () => {
             )}
           </video>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative min-h-screen flex items-end justify-center text-white pb-10"
-        >
-          <div className="text-center px-4">
-            {/* <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Experiencias Techno Únicas
-            </h1> */}
-            {/* <a
-              href="/events"
-              className="inline-block bg-mantra-gold hover:bg-mantra-darkGold text-mantra-blue px-8 py-3 rounded-full text-lg font-semibold transition-colors"
-            >
-              Ver Próximos Eventos
-            </a> */}
-          </div>
-        </motion.div>
       </div>
 
       {/* Contenido adicional con gradientes */}
@@ -61,7 +43,7 @@ export const Home = () => {
         </div>
 
         {/* Secciones animadas */}
-        <AnimatedSection delay={0.2} className="pt-10">
+        <AnimatedSection delay={0.2}>
           <div id="lineup">
             <EventLineup />
           </div>
@@ -83,6 +65,7 @@ export const Home = () => {
           </div>
         </AnimatedSection>
       </div>
+      <FloatingTicketButton />
     </div>
   );
 };

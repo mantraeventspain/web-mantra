@@ -12,7 +12,7 @@ import { useEventGallery } from "../../hooks/useEventGallery";
 import { SectionTitle } from "../ui/SectionTitle";
 import { EventLineup } from "../events/EventLineup";
 import { getOriginalImage } from "../../services/dropboxService";
-
+import { ScrollableSection } from "../ui/ScrollableSection";
 export const PastEvents = () => {
   const { events, isLoading: eventsLoading, error } = usePastEvents();
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
@@ -45,85 +45,86 @@ export const PastEvents = () => {
   if (error) return null;
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 pt-2">
       <SectionTitle title="Eventos Pasados" />
+      <ScrollableSection className="py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {events.map((event) => (
+            <motion.div
+              key={event.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="group relative bg-gradient-to-br from-mantra-blue/40 to-black/60 rounded-xl overflow-hidden flex flex-col h-full"
+            >
+              {/* Imagen principal del evento */}
+              <div className="aspect-video relative overflow-hidden">
+                <img
+                  src={event.imageUrl || "/default-event.jpg"}
+                  alt={event.title}
+                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors" />
+              </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {events.map((event) => (
-          <motion.div
-            key={event.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="group relative bg-gradient-to-br from-mantra-blue/40 to-black/60 rounded-xl overflow-hidden flex flex-col h-full"
-          >
-            {/* Imagen principal del evento */}
-            <div className="aspect-video relative overflow-hidden">
-              <img
-                src={event.imageUrl || "/default-event.jpg"}
-                alt={event.title}
-                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-black/50 group-hover:bg-black/30 transition-colors" />
-            </div>
+              {/* Contenido del evento */}
+              <div className="p-6 flex flex-col flex-1">
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  {event.title}
+                </h3>
 
-            {/* Contenido del evento */}
-            <div className="p-6 flex flex-col flex-1">
-              <h3 className="text-2xl font-bold text-white mb-4">
-                {event.title}
-              </h3>
+                {/* Espaciador flexible */}
+                <div className="flex-1"></div>
 
-              {/* Espaciador flexible */}
-              <div className="flex-1"></div>
+                {/* Información y botones (fijados abajo) */}
+                <div className="mt-auto">
+                  <div className="space-y-3 text-gray-300 mb-6">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-5 h-5 text-mantra-gold" />
+                      <span>
+                        {new Date(event.date).toLocaleDateString("es-ES", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
 
-              {/* Información y botones (fijados abajo) */}
-              <div className="mt-auto">
-                <div className="space-y-3 text-gray-300 mb-6">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-mantra-gold" />
-                    <span>
-                      {new Date(event.date).toLocaleDateString("es-ES", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <ImageIcon className="w-5 h-5 text-mantra-gold" />
+                      <span>{event.galleryImages?.length || 0} fotos</span>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <ImageIcon className="w-5 h-5 text-mantra-gold" />
-                    <span>{event.galleryImages?.length || 0} fotos</span>
-                  </div>
-                </div>
+                  {/* Botones de acción */}
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => setSelectedEvent(event.id)}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold rounded-lg transition-colors"
+                    >
+                      <Users className="w-5 h-5" />
+                      Line-up
+                    </button>
 
-                {/* Botones de acción */}
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => setSelectedEvent(event.id)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold rounded-lg transition-colors"
-                  >
-                    <Users className="w-5 h-5" />
-                    Line-up
-                  </button>
-
-                  <button
-                    onClick={() => handleGalleryOpen(event)}
-                    className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors
+                    <button
+                      onClick={() => handleGalleryOpen(event)}
+                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors
                       ${
                         event.galleryImages?.length
                           ? "bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold cursor-pointer"
                           : "bg-gray-700/10 text-gray-500 cursor-not-allowed"
                       }`}
-                    disabled={!event.galleryImages?.length}
-                  >
-                    <ImageIcon className="w-5 h-5" />
-                    Galería
-                  </button>
+                      disabled={!event.galleryImages?.length}
+                    >
+                      <ImageIcon className="w-5 h-5" />
+                      Galería
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </div>
+      </ScrollableSection>
 
       {/* Modal de Galería */}
       <AnimatePresence>

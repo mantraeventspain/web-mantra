@@ -1,55 +1,12 @@
 import { Link } from "react-router-dom";
 import { Music } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
 import { useSiteConfig } from "../../hooks/useSiteConfig";
 
 export const Header = () => {
-  const [isVideoVisible, setIsVideoVisible] = useState(true);
-  const mouseTimeoutRef = useRef<number | null>(null);
   const { config } = useSiteConfig();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      // Altura del viewport
-      const viewportHeight = window.innerHeight;
-      const scrollPosition = window.scrollY;
-
-      // El video deja de ser visible cuando hemos scrolleado más del 90% de su altura
-      if (scrollPosition > viewportHeight * 0.9) {
-        setIsVideoVisible(false);
-      } else {
-        setIsVideoVisible(true);
-      }
-    };
-
-    const handleMouseMove = () => {
-      // Limpiar el timeout anterior si existe
-      if (mouseTimeoutRef.current) {
-        window.clearTimeout(mouseTimeoutRef.current);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("mousemove", handleMouseMove);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("mousemove", handleMouseMove);
-      // Limpiar el timeout al desmontar
-      if (mouseTimeoutRef.current) {
-        window.clearTimeout(mouseTimeoutRef.current);
-      }
-    };
-  }, []);
-
   return (
-    <header
-      className={`fixed w-full z-50 transition-all duration-500 ${
-        !isVideoVisible
-          ? "opacity-0 -translate-y-full pointer-events-none"
-          : "opacity-100 translate-y-0"
-      }`}
-    >
+    <header className="fixed w-full z-50">
       {/* Logo en la esquina superior izquierda */}
       <div className="absolute top-8 left-8">
         <Link
@@ -79,8 +36,6 @@ export const Header = () => {
         ) : (
           <Link
             to={config.tickets_url ?? ""}
-            target="_blank"
-            rel="noopener noreferrer"
             className="group relative inline-flex items-center px-6 py-2 overflow-hidden rounded-full bg-transparent"
           >
             <span className="absolute inset-0 bg-mantra-gold transition-transform duration-300 group-hover:scale-105" />

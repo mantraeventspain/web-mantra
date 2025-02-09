@@ -37,10 +37,11 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 py-2">
       {/* Información del evento */}
-      <div className="relative mb-16 text-center">
+      <div className="relative mb-8 text-center">
         {/* Añadir decoración visual */}
+
         <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-mantra-gold to-transparent"></div>
 
         <h2 className="text-4xl md:text-5xl font-bold text-mantra-gold mb-4 tracking-tight">
@@ -79,7 +80,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
       {lineup
         .filter((artist) => artist.isHeadliner)
         .map((headliner) => (
-          <div key={headliner.id} className="mb-20 relative">
+          <div key={headliner.id} className="mb-12 relative">
             {/* Añadir efecto de brillo */}
             <div className="absolute -inset-1 bg-gradient-to-r from-mantra-gold/20 to-mantra-gold/0 rounded-xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity"></div>
 

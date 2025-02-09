@@ -7,6 +7,7 @@ import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { EventManager } from "../components/admin/EventManager";
 import { TrackManager } from "../components/admin/TrackManager";
+import { NewsletterManager } from "../components/admin/NewsletterManager";
 
 interface AccordionSectionProps {
   title: string;
@@ -110,6 +111,14 @@ export const Admin = () => {
           onToggle={() => toggleSection("videos")}
         >
           <VideoManager />
+        </AccordionSection>
+
+        <AccordionSection
+          title="Gestionar Newsletter"
+          isOpen={openSection === "newsletter"}
+          onToggle={() => toggleSection("newsletter")}
+        >
+          <NewsletterManager />
         </AccordionSection>
       </div>
     </div>

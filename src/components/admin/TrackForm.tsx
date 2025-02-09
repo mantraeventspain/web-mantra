@@ -11,7 +11,12 @@ interface TrackFormProps {
   onCancel: () => void;
 }
 
-const ALLOWED_AUDIO_TYPES = ["audio/mpeg", "audio/wav", "audio/ogg"];
+const ALLOWED_AUDIO_TYPES = [
+  "audio/mpeg",
+  "audio/wav",
+  "audio/ogg",
+  "video/mp4",
+];
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export const TrackForm = ({ track, onSuccess, onCancel }: TrackFormProps) => {
@@ -129,17 +134,20 @@ export const TrackForm = ({ track, onSuccess, onCancel }: TrackFormProps) => {
                   const file = e.target.files?.[0];
                   if (file) {
                     if (!ALLOWED_AUDIO_TYPES.includes(file.type)) {
-                      alert("El archivo debe ser un audio (MP3, WAV u OGG)");
+                      alert(
+                        "El archivo debe ser un audio (MP3, WAV, OGG, MP4)"
+                      );
                       e.target.value = "";
                       return;
                     }
+
                     setFiles((prev) => ({ ...prev, audio: file }));
                   }
                 }}
                 className="w-full px-4 py-2 bg-black/30 border border-mantra-gold/20 rounded-lg text-white"
               />
               <p className="mt-1 text-sm text-gray-400">
-                Formatos permitidos: MP3, WAV, OGG
+                Formatos permitidos: MP3, WAV, OGG, MP4
               </p>
             </div>
 

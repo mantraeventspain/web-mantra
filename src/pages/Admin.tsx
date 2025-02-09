@@ -6,6 +6,7 @@ import { ArtistManager } from "../components/admin/ArtistManager";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { EventManager } from "../components/admin/EventManager";
+import { TrackManager } from "../components/admin/TrackManager";
 
 interface AccordionSectionProps {
   title: string;
@@ -85,6 +86,14 @@ export const Admin = () => {
           onToggle={() => toggleSection("events")}
         >
           <EventManager />
+        </AccordionSection>
+
+        <AccordionSection
+          title="Gestionar Tracks"
+          isOpen={openSection === "tracks"}
+          onToggle={() => toggleSection("tracks")}
+        >
+          <TrackManager />
         </AccordionSection>
 
         <AccordionSection

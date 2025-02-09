@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import type { Event } from "../types";
 // import type { Database } from "../types/database.types";
 import type { Artist } from "../types/artist";
+import { uploadEventImage } from "../utils/eventHelpers";
 
 interface LineupArtist extends Artist {
   isHeadliner: boolean;
@@ -16,6 +17,7 @@ interface FormStatus {
   success: {
     data?: boolean;
     image?: boolean;
+    lineup?: boolean;
   };
   error: string | null;
 }
@@ -24,7 +26,7 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
   const [formData, setFormData] = useState({
     title: event?.title || "",
     description: event?.description || "",
-    date: event?.date || "",
+    date: event?.date ? formatDateForInput(event.date) : "",
     location: event?.location || "",
   });
 
@@ -35,6 +37,61 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
     success: {},
     error: null,
   });
+
+  function formatDateForInput(isoString: string): string {
+    const date = new Date(isoString);
+    return date.toISOString().slice(0, 16); // Obtiene YYYY-MM-DDThh:mm
+  }
+
+  useEffect(() => {
+    async function fetchLineup() {
+      if (!event?.id) return;
+
+      try {
+        const { data: lineupData, error: lineupError } = await supabase
+          .from("event_artists")
+          .select(
+            `
+            is_headliner,
+            performance_order,
+            start_time,
+            end_time,
+            artists(*)
+          `
+          )
+          .eq("event_id", event.id)
+          .order("performance_order");
+
+        if (lineupError) throw lineupError;
+
+        const formattedLineup = lineupData.map((item) => ({
+          ...item.artists,
+          id: item.artists?.id || "",
+          nickname: item.artists?.nickname || "",
+          firstName: item.artists?.first_name || "",
+          lastName1: item.artists?.last_name1 || "",
+          lastName2: item.artists?.last_name2 || "",
+          description: item.artists?.description || "",
+          instagram_username: item.artists?.instagram_username || "",
+          soundcloud_url: item.artists?.soundcloud_url || "",
+          beatport_url: item.artists?.beatport_url || "",
+          role: item.artists?.role || "",
+          is_active: item.artists?.is_active || false,
+          isHeadliner: item.is_headliner || false,
+          performanceOrder: item.performance_order,
+          startTime: item.start_time,
+          endTime: item.end_time,
+          avatarUrl: null, // Se puede agregar la lógica para obtener la URL del avatar si es necesario
+        })) as LineupArtist[];
+
+        setLineup(formattedLineup);
+      } catch (e) {
+        console.error("Error al cargar el lineup:", e);
+      }
+    }
+
+    fetchLineup();
+  }, [event?.id]);
 
   const handleSubmit = async () => {
     setStatus({ isLoading: true, success: {}, error: null });
@@ -111,12 +168,27 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
       // Subir imagen si existe
       let imageSuccess = false;
       if (imageFile && eventId) {
-        const { error: uploadError } = await supabase.storage
-          .from("media")
-          .upload(`images/events/${eventId}`, imageFile);
+        try {
+          const imagePath = await uploadEventImage(
+            imageFile,
+            formData.title,
+            eventId
+          );
 
-        if (uploadError) throw uploadError;
-        imageSuccess = true;
+          if (imagePath) {
+            // Actualizar la ruta de la imagen en la base de datos
+            const { error: updateError } = await supabase
+              .from("events")
+              .update({ image_url: imagePath })
+              .eq("id", eventId);
+
+            if (updateError) throw updateError;
+            imageSuccess = true;
+          }
+        } catch (error) {
+          console.error("Error uploading event image:", error);
+          throw new Error("Error al subir la imagen del evento");
+        }
       }
 
       setStatus({

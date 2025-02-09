@@ -1,4 +1,4 @@
-import { Artist } from "./artist";
+import type { Artist } from "./artist";
 
 export interface Track {
   id: string;
@@ -8,6 +8,20 @@ export interface Track {
   beatportUrl: string | null;
   filename: string;
   isFeatured: boolean;
-  artist?: Artist;
+  artist: Pick<Artist, "nickname">;
   artworkUrl: string | null;
+  audioUrl: string | null;
+}
+
+export interface TrackFormData {
+  title: string;
+  artistId: string;
+  releaseDate: string | null;
+  beatportUrl: string | null;
+  isFeatured: boolean;
+}
+
+export interface TrackFile {
+  audio: File | null;
+  artwork: File | null;
 }

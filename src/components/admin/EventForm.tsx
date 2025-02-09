@@ -13,6 +13,31 @@ interface EventFormProps {
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
+// Función auxiliar para manejar las horas
+function setTimeForEvent(date: string, time: string): string {
+  const [hours, minutes] = time.split(":").map(Number);
+  const eventDate = new Date(date);
+
+  // Si la hora es menor a 6, asumimos que es del día siguiente
+  if (hours < 6) {
+    eventDate.setDate(eventDate.getDate() + 1);
+  }
+
+  eventDate.setHours(hours, minutes);
+  return eventDate.toISOString();
+}
+
+// Función auxiliar para obtener la hora formateada
+function getFormattedTime(isoString: string | null): string {
+  if (!isoString) return "";
+
+  const date = new Date(isoString);
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  return `${hours}:${minutes}`;
+}
+
 export const EventForm = ({ event, onSuccess, onCancel }: EventFormProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const { artists } = useArtists({ includeInactive: false });
@@ -209,19 +234,18 @@ export const EventForm = ({ event, onSuccess, onCancel }: EventFormProps) => {
                       <input
                         type="time"
                         value={
-                          artist.startTime?.split("T")[1].slice(0, 5) || ""
+                          artist.startTime
+                            ? getFormattedTime(artist.startTime)
+                            : ""
                         }
                         onChange={(e) => {
                           const updatedLineup = [...lineup];
-                          const eventDate = new Date(formData.date);
-                          const [hours, minutes] = e.target.value.split(":");
-                          eventDate.setHours(
-                            parseInt(hours),
-                            parseInt(minutes)
-                          );
                           updatedLineup[index] = {
                             ...artist,
-                            startTime: eventDate.toISOString(),
+                            startTime: setTimeForEvent(
+                              formData.date,
+                              e.target.value
+                            ),
                           };
                           setLineup(updatedLineup);
                         }}
@@ -235,18 +259,17 @@ export const EventForm = ({ event, onSuccess, onCancel }: EventFormProps) => {
                       </label>
                       <input
                         type="time"
-                        value={artist.endTime?.split("T")[1].slice(0, 5) || ""}
+                        value={
+                          artist.endTime ? getFormattedTime(artist.endTime) : ""
+                        }
                         onChange={(e) => {
                           const updatedLineup = [...lineup];
-                          const eventDate = new Date(formData.date);
-                          const [hours, minutes] = e.target.value.split(":");
-                          eventDate.setHours(
-                            parseInt(hours),
-                            parseInt(minutes)
-                          );
                           updatedLineup[index] = {
                             ...artist,
-                            endTime: eventDate.toISOString(),
+                            endTime: setTimeForEvent(
+                              formData.date,
+                              e.target.value
+                            ),
                           };
                           setLineup(updatedLineup);
                         }}

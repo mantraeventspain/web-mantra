@@ -37,7 +37,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-2">
+    <div className="container mx-auto px-4">
       {/* Información del evento */}
       <div className="relative mb-8 text-center">
         {/* Añadir decoración visual */}
@@ -163,7 +163,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
           .map((artist) => (
             <div
               key={artist.id}
-              className="group bg-gradient-to-br from-mantra-blue/40 to-mantra-blue/30 rounded-lg p-6 backdrop-blur-sm hover:from-mantra-blue/50 hover:to-mantra-blue/40 transition-all duration-300 border border-mantra-gold/10 hover:border-mantra-gold/30"
+              className="group bg-gradient-to-br from-mantra-blue/40 to-mantra-blue/30 rounded-lg p-2 backdrop-blur-sm hover:from-mantra-blue/50 hover:to-mantra-blue/40 transition-all duration-300 border border-mantra-gold/10 hover:border-mantra-gold/30"
             >
               <div className="flex flex-col items-center space-y-4">
                 <div className="relative w-32 h-32">

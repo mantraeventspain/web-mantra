@@ -39,7 +39,7 @@ export const AnimatedSection = ({
         delay,
         ease: [0.16, 1, 0.3, 1], // Curva de animación suave tipo Apple
       }}
-      className={`w-full py-12 scroll-mt-12 will-change-transform ${className}`}
+      className={`w-full py-6 scroll-mt-8 will-change-transform ${className}`}
     >
       {children}
     </motion.div>

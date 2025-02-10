@@ -1,5 +1,13 @@
 User-agent: *
 Allow: /
 
+# Bloquear páginas de administración
+Disallow: /admin/
+Disallow: /login/
+Disallow: /dashboard/
+
 # Sitemap
 Sitemap: https://mantraevent.es/sitemap.xml
+
+# Tiempo de rastreo
+Crawl-delay: 10

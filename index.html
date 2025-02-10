@@ -4,18 +4,24 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/icon-link-mantra.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mantra</title>
+    <title>
+      Mantra Events - Eventos de Música Electrónica en España | Official Site
+    </title>
 
-    <!-- SEO Meta Tags -->
+    <!-- SEO Meta Tags Mejorados -->
     <meta
       name="description"
-      content="Descubre los mejores eventos de música electrónica en España. Mantra Events te trae los mejores DJs y productores en localizaciones únicas."
+      content="Mantra Events organiza los mejores eventos de música electrónica en España. Descubre nuestros próximos eventos con DJs internacionales en localizaciones únicas. #MantraEvents"
     />
     <meta
       name="keywords"
-      content="mantra events, música electrónica, eventos techno, djs españa, fiestas electrónicas"
+      content="mantra events, mantra event, música electrónica españa, eventos techno madrid, fiestas electrónicas, djs españa, eventos edm, clubbing españa"
     />
     <meta name="author" content="Mantra Events" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="geo.region" content="ES" />
+    <meta name="geo.placename" content="España" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -28,7 +34,7 @@
       property="og:description"
       content="Descubre los mejores eventos de música electrónica en España"
     />
-    <meta property="og:image" content="https://mantraevent.es/og-image.jpg" />
+    <meta property="og:image" content="https://mantraevent.es" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -41,13 +47,58 @@
       property="twitter:description"
       content="Eventos únicos de música electrónica en España"
     />
-    <meta
-      property="twitter:image"
-      content="https://mantraevent.es/twitter-image.jpg"
-    />
+    <meta property="twitter:image" content="https://mantraevent.es" />
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://mantraevent.es" />
+
+    <!-- JSON-LD para la Organización -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Mantra Events",
+        "url": "https://mantraevent.es",
+        "logo": "https://mantraevent.es",
+        "description": "Mantra Events organiza los mejores eventos de música electrónica en España",
+        "sameAs": [
+          "https://www.facebook.com/p/Mantra-events-61557011395289/",
+          "https://www.instagram.com/mantra_event/",
+          "https://soundcloud.com/mantra_label"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "ES"
+        }
+      }
+    </script>
+
+    <!-- JSON-LD para MusicEvent -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "MusicEvent",
+        "name": "Mantra Events",
+        "description": "Eventos de música electrónica con los mejores DJs internacionales",
+        "image": "https://mantraevent.es",
+        "offers": {
+          "@type": "Offer",
+          "url": "https://mantraevent.es",
+          "availability": "https://schema.org/InStock"
+        },
+        "organizer": {
+          "@type": "Organization",
+          "name": "Mantra Events",
+          "url": "https://mantraevent.es"
+        },
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "performer": {
+          "@type": "MusicGroup",
+          "name": "Various DJs"
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

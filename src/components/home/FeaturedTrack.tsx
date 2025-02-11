@@ -21,12 +21,12 @@ export const TracksSection = () => {
       {/* Track Destacado */}
       {featuredTrack && <FeaturedTrack track={featuredTrack} />}
 
-      {/* Carrusel de Tracks */}
+      {/* Carrusel de Tracks - Modificado para mostrar tracks parcialmente */}
       {regularTracks.length > 0 && (
         <div className="mt-16">
           <h3 className="text-xl text-mantra-gold mb-8 pl-4">Más Tracks</h3>
           <ScrollableSection>
-            <div className="flex gap-6 px-4 pb-4">
+            <div className="flex gap-6 px-4 pb-4 pr-[20%]">
               {regularTracks.map((track) => (
                 <TrackCard key={track.id} track={track} />
               ))}
@@ -194,7 +194,7 @@ const TrackCard = ({ track }: { track: Track }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="cursor-pointer flex-shrink-0 w-[300px]"
+      className="cursor-pointer flex-shrink-0 w-[280px]"
     >
       <div className="relative aspect-square mb-4">
         <div className="absolute inset-0 rounded-xl overflow-hidden hover:scale-95 transition-transform duration-300">

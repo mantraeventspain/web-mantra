@@ -11,6 +11,9 @@ export default {
         mantra: {
           gold: "#D4A657", // Color dorado principal
           darkGold: "#B38B45", // Versión más oscura del dorado
+          orange: "#FF8C42",
+          darkOrange: "#E67E3B",
+          warmBlack: "#1A1614",
           blue: "#1A2B3C",
           darkBlue: "#0F1A24",
         },

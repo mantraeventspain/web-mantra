@@ -34,11 +34,11 @@ export const Home = () => {
       </div>
 
       {/* Contenido adicional con gradientes */}
-      <div className="relative bg-gradient-to-b from-black via-mantra-darkGold/10 to-black">
+      <div className="relative bg-gradient-to-b from-black via-mantra-orange/10 to-black">
         {/* Gradiente decorativo */}
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-radial from-mantra-gold/20 via-black/95 to-black">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,166,87,0.15),rgba(15,26,36,0.95)_50%,rgba(0,0,0,1)_100%)]" />
+          <div className="absolute inset-0 bg-gradient-radial from-mantra-orange/20 via-black/95 to-black">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,140,66,0.15),rgba(26,22,20,0.95)_50%,rgba(0,0,0,1)_100%)]" />
           </div>
         </div>
 

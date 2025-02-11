@@ -19,7 +19,7 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-mantra-blue via-mantra-darkBlue to-black">
+    <footer className="bg-gradient-to-b from-mantra-warmBlack via-mantra-darkOrange/5 to-black">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>

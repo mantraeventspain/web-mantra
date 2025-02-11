@@ -18,14 +18,14 @@ export const ArtistModal = ({ artist, onClose }: ArtistModalProps) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 bg-black backdrop-blur-sm z-[100] flex items-center justify-center p-4"
         onClick={(e) => e.target === e.currentTarget && onClose()}
       >
         <motion.div
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 20 }}
-          className="bg-gradient-to-b from-mantra-darkBlue/50 to-black rounded-xl max-w-4xl w-full overflow-hidden shadow-2xl"
+          className="bg-gradient-to-b from-mantra-warmBlack to-black rounded-xl max-w-4xl w-full overflow-hidden shadow-2xl"
         >
           <div className="relative h-full">
             <button

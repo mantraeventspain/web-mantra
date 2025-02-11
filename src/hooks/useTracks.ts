@@ -27,15 +27,16 @@ export function useTracks() {
       const tracksWithUrls = await Promise.all(
         data.map(async (track) => {
           const basePath = `artist/${track.artists.nickname}`;
-          const audioPath = `${basePath}/${track.filename}`;
           const artworkPath = `${basePath}/${track.filename_icon}`;
+          const audioPath = `${basePath}/${track.filename}`;
+
+          const { data: artworkData } = supabase.storage
+            .from("media")
+            .getPublicUrl(artworkPath);
 
           const { data: audioData } = supabase.storage
             .from("media")
             .getPublicUrl(audioPath);
-          const { data: artworkData } = supabase.storage
-            .from("media")
-            .getPublicUrl(artworkPath);
 
           return {
             id: track.id,

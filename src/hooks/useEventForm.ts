@@ -102,12 +102,6 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
         throw new Error("Por favor completa todos los campos requeridos");
       }
 
-      // Validar que solo haya un headliner
-      const headliners = lineup.filter((artist) => artist.isHeadliner);
-      if (headliners.length > 1) {
-        throw new Error("Solo puede haber un artista principal por evento");
-      }
-
       let dataSuccess = false;
       let eventId = event?.id;
 

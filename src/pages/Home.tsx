@@ -1,7 +1,7 @@
 import { AnimatedSection } from "../components/home/AnimatedSection";
 import { ArtistShowcase } from "../components/home/ArtistShowcase";
 import { EventLineup } from "../components/events/EventLineup";
-import { FeaturedTrack } from "../components/home/FeaturedTrack";
+import { TracksSection } from "../components/home/FeaturedTrack";
 import { PastEvents } from "../components/home/PastEvents";
 import { usePublicUrl } from "../hooks/useSupabase";
 import { FloatingTicketButton } from "../components/layout/FloatingTicketButton";
@@ -51,7 +51,7 @@ export const Home = () => {
 
         <AnimatedSection delay={0.2}>
           <div className="container mx-auto px-4">
-            <FeaturedTrack />
+            <TracksSection />
           </div>
         </AnimatedSection>
 

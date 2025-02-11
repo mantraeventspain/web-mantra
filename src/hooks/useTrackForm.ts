@@ -22,13 +22,26 @@ async function deleteTrackFiles(track: Track) {
   if (!artistData) return;
 
   const basePath = `artist/${artistData.nickname}`;
+
+  // Listar todos los archivos en el directorio del artista
+  const { data: files } = await supabase.storage.from("media").list(basePath);
+
+  if (!files) return;
+
   const filesToDelete = [];
 
-  if (track.filename) {
-    filesToDelete.push(`${basePath}/${track.filename}`);
-  }
-  if (track.artworkUrl) {
-    filesToDelete.push(`${basePath}/${track.artworkUrl}`);
+  // Buscar archivos que coincidan con el nombre base del track (sin extensión)
+  const trackBaseName = track.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const artworkBaseName = `${trackBaseName}-icon`;
+
+  for (const file of files) {
+    // Comprobar si el archivo coincide con el patrón del track o artwork
+    if (
+      file.name.startsWith(trackBaseName + ".") ||
+      file.name.startsWith(artworkBaseName + ".")
+    ) {
+      filesToDelete.push(`${basePath}/${file.name}`);
+    }
   }
 
   if (filesToDelete.length > 0) {
@@ -89,7 +102,6 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
       let dataSuccess = false;
       let filesSuccess = false;
 
-      // Obtener el artista para construir la ruta base
       const { data: artistData, error: artistError } = await supabase
         .from("artists")
         .select("nickname")
@@ -106,15 +118,24 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
       if (files.audio || files.artwork) {
         if (files.audio) {
           const audioExt = files.audio.name.split(".").pop();
-          audioFilename = `${formData.title
+          const audioBaseName = formData.title
             .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")}.${audioExt}`;
+            .replace(/[^a-z0-9]+/g, "-");
+          audioFilename = `${audioBaseName}.${audioExt}`;
 
-          // Eliminar archivo anterior si existe
-          if (track?.filename) {
-            await supabase.storage
-              .from("media")
-              .remove([`${basePath}/${track.filename}`]);
+          // Listar y eliminar archivos antiguos que coincidan con el nombre base
+          const { data: existingFiles } = await supabase.storage
+            .from("media")
+            .list(basePath);
+
+          if (existingFiles) {
+            const oldAudioFiles = existingFiles
+              .filter((file) => file.name.startsWith(audioBaseName + "."))
+              .map((file) => `${basePath}/${file.name}`);
+
+            if (oldAudioFiles.length > 0) {
+              await supabase.storage.from("media").remove(oldAudioFiles);
+            }
           }
 
           const { error: audioError } = await supabase.storage
@@ -126,15 +147,24 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
 
         if (files.artwork) {
           const artworkExt = files.artwork.name.split(".").pop();
-          artworkFilename = `${formData.title
+          const artworkBaseName = `${formData.title
             .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")}-icon.${artworkExt}`;
+            .replace(/[^a-z0-9]+/g, "-")}-icon`;
+          artworkFilename = `${artworkBaseName}.${artworkExt}`;
 
-          // Eliminar archivo anterior si existe
-          if (track?.artworkUrl) {
-            await supabase.storage
-              .from("media")
-              .remove([`${basePath}/${track.artworkUrl}`]);
+          // Listar y eliminar archivos antiguos que coincidan con el nombre base
+          const { data: existingFiles } = await supabase.storage
+            .from("media")
+            .list(basePath);
+
+          if (existingFiles) {
+            const oldArtworkFiles = existingFiles
+              .filter((file) => file.name.startsWith(artworkBaseName + "."))
+              .map((file) => `${basePath}/${file.name}`);
+
+            if (oldArtworkFiles.length > 0) {
+              await supabase.storage.from("media").remove(oldArtworkFiles);
+            }
           }
 
           const { error: artworkError } = await supabase.storage

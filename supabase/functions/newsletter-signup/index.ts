@@ -74,7 +74,7 @@ serve(async (req) => {
 
     // Enviar email de bienvenida
     const { data, error: resendError } = await resend.emails.send({
-      from: "Mantra Events <onboarding@resend.dev>",
+      from: "Mantra Events <newsletter@mantraevent.es>",
       to: email,
       subject: "¡Bienvenido a la familia Mantra Events! 🎉",
       html: `

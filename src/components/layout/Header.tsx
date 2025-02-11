@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { Music } from "lucide-react";
 import { useSiteConfig } from "../../hooks/useSiteConfig";
 
 export const Header = () => {
@@ -10,11 +9,14 @@ export const Header = () => {
       {/* Logo en la esquina superior izquierda */}
       <div className="absolute top-8 left-8">
         <Link
-          to="/"
-          className="flex items-center space-x-2 hover:scale-105 transition-transform"
+          to="./"
+          className="flex items-center hover:scale-105 transition-transform"
         >
-          <Music className="w-8 h-8 text-mantra-gold" />
-          <span className="text-xl font-bold text-mantra-gold">Mantra</span>
+          <img
+            src="/logo-mantra-letras.png"
+            alt="Mantra Logo"
+            className="h-8 w-auto"
+          />
         </Link>
       </div>
 

@@ -188,7 +188,7 @@ serve(async (req) => {
     // Enviar emails
     const emailPromises = subscribers.map((email: string) =>
       resend.emails.send({
-        from: "Mantra Events <onboarding@resend.dev>",
+        from: "Mantra Events <newsletter@mantraevent.es>",
         to: email,
         subject: `¡No te pierdas nuestro próximo evento: ${event.title}!`,
         html: `
@@ -291,3 +291,8 @@ serve(async (req) => {
     --data '{"name":"Functions"}'
 
 */
+
+// Como desplegar la funcion en supabase, mediante la terminal:
+// 1. Copiar el codigo de la funcion
+// 2. Ir a la terminal y ejecutar el comando:
+// supabase functions deploy send-newsletter

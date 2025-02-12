@@ -1,10 +1,20 @@
+import { lazy, Suspense } from "react";
 import { AnimatedSection } from "../components/home/AnimatedSection";
-import { ArtistShowcase } from "../components/home/ArtistShowcase";
 import { EventLineup } from "../components/events/EventLineup";
-import { TracksSection } from "../components/home/FeaturedTrack";
-import { PastEvents } from "../components/home/PastEvents";
 import { usePublicUrl } from "../hooks/useSupabase";
 import { FloatingTicketButton } from "../components/layout/FloatingTicketButton";
+
+// Lazy load components
+const PastEvents = lazy(() => import("../components/home/PastEvents"));
+const ArtistShowcase = lazy(() => import("../components/home/ArtistShowcase"));
+const TracksSection = lazy(() => import("../components/home/FeaturedTrack"));
+
+// Loading component
+const LoadingSection = () => (
+  <div className="flex justify-center items-center py-12">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-mantra-gold"></div>
+  </div>
+);
 
 export const Home = () => {
   const { url: videoUrl, isLoading } = usePublicUrl(
@@ -51,17 +61,23 @@ export const Home = () => {
 
         <AnimatedSection delay={0.2}>
           <div className="container mx-auto px-4">
-            <TracksSection />
+            <Suspense fallback={<LoadingSection />}>
+              <TracksSection />
+            </Suspense>
           </div>
         </AnimatedSection>
 
         <AnimatedSection delay={0.2}>
-          <PastEvents />
+          <Suspense fallback={<LoadingSection />}>
+            <PastEvents />
+          </Suspense>
         </AnimatedSection>
 
         <AnimatedSection delay={0.2}>
           <div id="artistas">
-            <ArtistShowcase />
+            <Suspense fallback={<LoadingSection />}>
+              <ArtistShowcase />
+            </Suspense>
           </div>
         </AnimatedSection>
       </div>

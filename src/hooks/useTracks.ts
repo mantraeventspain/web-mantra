@@ -28,15 +28,20 @@ export function useTracks() {
         data.map(async (track) => {
           const basePath = `artist/${track.artists.nickname}`;
           const artworkPath = `${basePath}/${track.filename_icon}`;
-          const audioPath = `${basePath}/${track.filename}`;
+
+          // Only get audio URL for featured tracks
+          let audioUrl = null;
+          if (track.is_featured) {
+            const audioPath = `${basePath}/${track.filename}`;
+            const { data: audioData } = supabase.storage
+              .from("media")
+              .getPublicUrl(audioPath);
+            audioUrl = audioData?.publicUrl || null;
+          }
 
           const { data: artworkData } = supabase.storage
             .from("media")
             .getPublicUrl(artworkPath);
-
-          const { data: audioData } = supabase.storage
-            .from("media")
-            .getPublicUrl(audioPath);
 
           return {
             id: track.id,
@@ -48,7 +53,7 @@ export function useTracks() {
             isFeatured: track.is_featured,
             artist: track.artists,
             artworkUrl: artworkData?.publicUrl || null,
-            audioUrl: audioData?.publicUrl || null,
+            audioUrl: audioUrl,
           };
         })
       );

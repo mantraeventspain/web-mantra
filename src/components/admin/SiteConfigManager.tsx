@@ -9,7 +9,7 @@ interface SocialLinks {
   beatport_url: string;
 }
 
-export const SiteConfigManager = () => {
+const SiteConfigManager = () => {
   const [links, setLinks] = useState<SocialLinks>({
     facebook_url: "",
     instagram_url: "",
@@ -172,3 +172,5 @@ export const SiteConfigManager = () => {
     </form>
   );
 };
+
+export default SiteConfigManager;

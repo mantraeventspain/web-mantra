@@ -4,7 +4,7 @@ import { useVideoUpload } from "../../hooks/useVideoUpload";
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB en bytes
 
-export const VideoManager = () => {
+const VideoManager = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { uploadVideo, isLoading, error } = useVideoUpload();
 
@@ -101,3 +101,5 @@ export const VideoManager = () => {
     </div>
   );
 };
+
+export default VideoManager;

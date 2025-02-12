@@ -1,9 +1,8 @@
 import { Facebook, Instagram, Users, ArrowUp } from "lucide-react";
-import { FaSoundcloud } from "react-icons/fa";
-import { SiBeatport } from "react-icons/si";
 import { useSiteConfig } from "../../hooks/useSiteConfig";
 import { NewsletterForm } from "../newsletter/NewsletterForm";
-
+import { SiBeatport } from "react-icons/si";
+import { FaSoundcloud } from "react-icons/fa";
 export const Footer = () => {
   const { config } = useSiteConfig();
 
@@ -56,7 +55,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <FaSoundcloud className="w-6 h-6" />
+                <FaSoundcloud />
               </a>
               <a
                 href={config.beatport_url}
@@ -65,7 +64,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <SiBeatport className="w-6 h-6" />
+                <SiBeatport />
               </a>
             </div>
           </div>

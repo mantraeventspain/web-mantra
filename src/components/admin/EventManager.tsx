@@ -3,8 +3,10 @@ import { useEvents } from "../../hooks/useEvents";
 import { EventForm } from "./EventForm";
 import { Event } from "../../types";
 import { Edit, Plus, Calendar } from "lucide-react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
-export const EventManager = () => {
+const EventManager = () => {
   const { events, isLoading, error, refetch } = useEvents();
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -50,10 +52,12 @@ export const EventManager = () => {
             className="bg-mantra-blue/30 rounded-xl backdrop-blur-sm border border-mantra-gold/20 overflow-hidden"
           >
             <div className="aspect-video relative">
-              <img
+              <LazyLoadImage
                 src={event.imageUrl || "/default-event.jpg"}
                 alt={event.title}
                 className="w-full h-full object-cover"
+                effect="blur"
+                threshold={100}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -106,3 +110,5 @@ export const EventManager = () => {
     </>
   );
 };
+
+export default EventManager;

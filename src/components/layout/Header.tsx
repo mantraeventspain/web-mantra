@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { useSiteConfig } from "../../hooks/useSiteConfig";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 export const Header = () => {
   const { config } = useSiteConfig();
@@ -12,10 +14,12 @@ export const Header = () => {
           to="./"
           className="flex items-center hover:scale-105 transition-transform"
         >
-          <img
+          <LazyLoadImage
             src="/logo-mantra-letras.png"
             alt="Mantra Logo"
             className="h-8 w-auto"
+            effect="blur"
+            threshold={100}
           />
         </Link>
       </div>

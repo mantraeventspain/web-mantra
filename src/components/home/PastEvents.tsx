@@ -11,27 +11,42 @@ import { usePastEvents } from "../../hooks/usePastEvents";
 import { useEventGallery } from "../../hooks/useEventGallery";
 import { SectionTitle } from "../ui/SectionTitle";
 import { EventLineup } from "../events/EventLineup";
-import { getOriginalImage } from "../../services/dropboxService";
 import { ScrollableSection } from "../ui/ScrollableSection";
-export const PastEvents = () => {
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
+import { getTemporaryLinks } from "../../services/dropboxService";
+import { ImageUrl } from "../../types/image";
+
+const PastEvents = () => {
   const { events, isLoading: eventsLoading, error } = usePastEvents();
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
   const [selectedEventTitle, setSelectedEventTitle] = useState<string | null>(
     null
   );
+  const [galleryImages, setGalleryImages] = useState<ImageUrl[]>([]);
+  const [isLoadingGallery, setIsLoadingGallery] = useState(false);
 
   const {
-    images: galleryImages,
     isLoading: galleryLoading,
     hasMore,
     loadMore,
   } = useEventGallery({
     eventTitle: selectedEventTitle || "",
-    imagesPerPage: 25,
+    imagesPerPage: 10,
   });
 
-  const handleGalleryOpen = (event: { title: string }) => {
-    setSelectedEventTitle(event.title);
+  const handleGalleryOpen = async (event: { title: string }) => {
+    setIsLoadingGallery(true);
+    try {
+      const path = `/MANTRA/${event.title}`;
+      const images = await getTemporaryLinks(path);
+      setGalleryImages(images);
+      setSelectedEventTitle(event.title);
+    } catch (error) {
+      console.error("Error loading gallery:", error);
+    } finally {
+      setIsLoadingGallery(false);
+    }
   };
 
   const handleLineupOpen = (eventId: string) => {
@@ -81,10 +96,12 @@ export const PastEvents = () => {
             >
               {/* Imagen principal del evento */}
               <div className="aspect-video relative overflow-hidden">
-                <img
+                <LazyLoadImage
                   src={event.imageUrl || "/default-event.jpg"}
                   alt={event.title}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                  effect="blur"
+                  threshold={100}
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors" />
               </div>
@@ -111,11 +128,6 @@ export const PastEvents = () => {
                         })}
                       </span>
                     </div>
-
-                    <div className="flex items-center gap-2">
-                      <ImageIcon className="w-5 h-5 text-mantra-gold" />
-                      <span>{event.galleryImages?.length || 0} fotos</span>
-                    </div>
                   </div>
 
                   {/* Botones de acción */}
@@ -130,13 +142,7 @@ export const PastEvents = () => {
 
                     <button
                       onClick={() => handleGalleryOpen(event)}
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors
-                      ${
-                        event.galleryImages?.length
-                          ? "bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold cursor-pointer"
-                          : "bg-gray-700/10 text-gray-500 cursor-not-allowed"
-                      }`}
-                      disabled={!event.galleryImages?.length}
+                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold cursor-pointer`}
                     >
                       <ImageIcon className="w-5 h-5" />
                       Galería
@@ -185,33 +191,36 @@ export const PastEvents = () => {
 
               {/* Contenido scrolleable con estilo personalizado */}
               <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {galleryImages.map((image, index) => (
-                    <div
-                      key={`${image.originalPath}-${index}`}
-                      className="relative group aspect-square cursor-pointer"
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        const originalUrl = await getOriginalImage(
-                          image.originalPath
-                        );
-                        if (originalUrl) {
-                          window.open(originalUrl, "_blank");
-                        }
-                      }}
-                    >
-                      <img
-                        src={image.thumbnail || "/placeholder.jpg"}
-                        alt="Evento"
-                        className="w-full h-full object-cover rounded-lg"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                        <span className="text-white text-sm">Ver original</span>
+                {isLoadingGallery ? (
+                  <div className="flex justify-center items-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-mantra-gold"></div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {galleryImages.map((image, index) => (
+                      <div
+                        key={`${image.originalPath}-${index}`}
+                        className="relative group aspect-square"
+                        onContextMenu={(e) => e.preventDefault()}
+                      >
+                        <LazyLoadImage
+                          src={image.thumbnail || "/placeholder.jpg"}
+                          alt="Evento"
+                          className="w-full h-full object-cover rounded-lg"
+                          effect="blur"
+                          threshold={100}
+                          loading="lazy"
+                          draggable="false"
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                          <span className="text-white text-sm">
+                            Vista previa
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Footer fijo con botón de cargar más */}
@@ -283,3 +292,5 @@ export const PastEvents = () => {
     </div>
   );
 };
+
+export default PastEvents;

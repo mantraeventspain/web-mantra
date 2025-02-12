@@ -1,13 +1,20 @@
+import { lazy, Suspense } from "react";
 import { useAuth } from "../hooks/useAuth";
-import { VideoManager } from "../components/admin/VideoManager";
 import { Navigate } from "react-router-dom";
-import { SiteConfigManager } from "../components/admin/SiteConfigManager";
-import { ArtistManager } from "../components/admin/ArtistManager";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { EventManager } from "../components/admin/EventManager";
-import { TrackManager } from "../components/admin/TrackManager";
-import { NewsletterManager } from "../components/admin/NewsletterManager";
+
+// Lazy load all admin components
+const VideoManager = lazy(() => import("../components/admin/VideoManager"));
+const SiteConfigManager = lazy(
+  () => import("../components/admin/SiteConfigManager")
+);
+const ArtistManager = lazy(() => import("../components/admin/ArtistManager"));
+const EventManager = lazy(() => import("../components/admin/EventManager"));
+const TrackManager = lazy(() => import("../components/admin/TrackManager"));
+const NewsletterManager = lazy(
+  () => import("../components/admin/NewsletterManager")
+);
 
 interface AccordionSectionProps {
   title: string;
@@ -40,13 +47,23 @@ const AccordionSection = ({
           isOpen ? "max-h-[2000px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="p-6 border-t border-mantra-gold/20">{children}</div>
+        <div className="p-6 border-t border-mantra-gold/20">
+          <Suspense
+            fallback={
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-mantra-gold"></div>
+              </div>
+            }
+          >
+            {children}
+          </Suspense>
+        </div>
       </div>
     </div>
   );
 };
 
-export const Admin = () => {
+const Admin = () => {
   const { user, isLoading } = useAuth();
   const [openSection, setOpenSection] = useState<string | null>(null);
 
@@ -78,7 +95,7 @@ export const Admin = () => {
           isOpen={openSection === "artists"}
           onToggle={() => toggleSection("artists")}
         >
-          <ArtistManager />
+          {openSection === "artists" && <ArtistManager />}
         </AccordionSection>
 
         <AccordionSection
@@ -86,7 +103,7 @@ export const Admin = () => {
           isOpen={openSection === "events"}
           onToggle={() => toggleSection("events")}
         >
-          <EventManager />
+          {openSection === "events" && <EventManager />}
         </AccordionSection>
 
         <AccordionSection
@@ -94,7 +111,7 @@ export const Admin = () => {
           isOpen={openSection === "tracks"}
           onToggle={() => toggleSection("tracks")}
         >
-          <TrackManager />
+          {openSection === "tracks" && <TrackManager />}
         </AccordionSection>
 
         <AccordionSection
@@ -102,7 +119,7 @@ export const Admin = () => {
           isOpen={openSection === "config"}
           onToggle={() => toggleSection("config")}
         >
-          <SiteConfigManager />
+          {openSection === "config" && <SiteConfigManager />}
         </AccordionSection>
 
         <AccordionSection
@@ -110,7 +127,7 @@ export const Admin = () => {
           isOpen={openSection === "videos"}
           onToggle={() => toggleSection("videos")}
         >
-          <VideoManager />
+          {openSection === "videos" && <VideoManager />}
         </AccordionSection>
 
         <AccordionSection
@@ -118,9 +135,11 @@ export const Admin = () => {
           isOpen={openSection === "newsletter"}
           onToggle={() => toggleSection("newsletter")}
         >
-          <NewsletterManager />
+          {openSection === "newsletter" && <NewsletterManager />}
         </AccordionSection>
       </div>
     </div>
   );
 };
+
+export default Admin;

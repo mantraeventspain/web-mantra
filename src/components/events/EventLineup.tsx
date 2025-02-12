@@ -1,7 +1,10 @@
-import { SiBeatport } from "react-icons/si";
+import { FaSoundcloud } from "react-icons/fa";
 import { useEventLineupById } from "../../hooks/useEventLineupById";
-import { FaInstagram, FaSoundcloud } from "react-icons/fa";
 import { SectionTitle } from "../ui/SectionTitle";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
+import { Instagram } from "lucide-react";
+import { SiBeatport } from "react-icons/si";
 
 interface EventLineupProps {
   eventId?: string | null;
@@ -101,7 +104,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
                 <div className="flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-12">
                   <div className="relative w-48 h-48 group">
                     {headliner.avatarUrl ? (
-                      <img
+                      <LazyLoadImage
                         src={headliner.avatarUrl}
                         alt={headliner.nickname}
                         className="w-full h-full object-cover rounded-full ring-4 ring-mantra-gold/50 group-hover:ring-mantra-gold transition-all duration-300"
@@ -121,7 +124,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
                           rel="noopener noreferrer"
                           className="bg-mantra-gold text-black p-3 rounded-full hover:scale-110 transition-transform"
                         >
-                          <FaInstagram size={20} />
+                          <Instagram size={20} />
                         </a>
                       )}
                       {headliner.beatport_url && (
@@ -131,7 +134,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
                           rel="noopener noreferrer"
                           className="bg-mantra-gold text-black p-3 rounded-full hover:scale-110 transition-transform"
                         >
-                          <SiBeatport size={20} />
+                          <SiBeatport />
                         </a>
                       )}
                       {headliner.soundcloud_url && (
@@ -141,7 +144,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
                           rel="noopener noreferrer"
                           className="bg-mantra-gold text-black p-3 rounded-full hover:scale-110 transition-transform"
                         >
-                          <FaSoundcloud size={20} />
+                          <FaSoundcloud />
                         </a>
                       )}
                     </div>
@@ -182,7 +185,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
               <div className="flex flex-col items-center space-y-4">
                 <div className="relative w-32 h-32">
                   {artist.avatarUrl ? (
-                    <img
+                    <LazyLoadImage
                       src={artist.avatarUrl}
                       alt={artist.nickname}
                       className="w-full h-full object-cover rounded-full ring-2 ring-mantra-gold/30 group-hover:ring-mantra-gold/50 transition-all duration-300"
@@ -217,7 +220,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
                         rel="noopener noreferrer"
                         className="text-mantra-gold hover:text-white transition-colors"
                       >
-                        <FaInstagram size={24} />
+                        <Instagram size={24} />
                       </a>
                     )}
                     {artist.beatport_url && (
@@ -227,7 +230,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
                         rel="noopener noreferrer"
                         className="text-mantra-gold hover:text-white transition-colors"
                       >
-                        <SiBeatport size={24} />
+                        <SiBeatport />
                       </a>
                     )}
                     {artist.soundcloud_url && (
@@ -237,7 +240,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
                         rel="noopener noreferrer"
                         className="text-mantra-gold hover:text-white transition-colors"
                       >
-                        <FaSoundcloud size={24} />
+                        <FaSoundcloud />
                       </a>
                     )}
                   </div>

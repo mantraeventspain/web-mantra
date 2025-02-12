@@ -9,7 +9,7 @@ interface Subscriber {
   status: string | null;
 }
 
-export const NewsletterManager = () => {
+const NewsletterManager = () => {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -215,3 +215,5 @@ export const NewsletterManager = () => {
     </div>
   );
 };
+
+export default NewsletterManager;

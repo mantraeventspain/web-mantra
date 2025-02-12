@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { useTracks } from "../../hooks/useTracks";
-import { SiBeatport } from "react-icons/si";
 import { Play, Pause } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
@@ -8,8 +7,11 @@ import { SectionTitle } from "../ui/SectionTitle";
 import { ScrollableSection } from "../ui/ScrollableSection";
 import { useFeaturedTrack } from "../../hooks/useFeaturedTrack";
 import type { Track } from "../../types/track";
-
-export const TracksSection = () => {
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
+import { supabase } from "../../lib/supabase";
+import { SiBeatport } from "react-icons/si";
+const TracksSection = () => {
   const { tracks } = useTracks();
   const featuredTrack = tracks.find((track) => track.isFeatured);
   const regularTracks = tracks.filter((track) => !track.isFeatured);
@@ -37,6 +39,8 @@ export const TracksSection = () => {
     </div>
   );
 };
+
+export default TracksSection;
 
 // Componente para el track destacado (mantiene la lógica actual)
 const FeaturedTrack = ({ track }: { track: Track }) => {
@@ -108,10 +112,12 @@ const FeaturedTrack = ({ track }: { track: Track }) => {
       <div className="flex flex-col md:flex-row gap-8 items-center">
         {/* Artwork y controles */}
         <div className="relative group w-64 h-64 flex-shrink-0">
-          <img
+          <LazyLoadImage
             src={artworkUrl || "/default-artwork.jpg"}
             alt={track.title}
             className="w-full h-full object-cover rounded-lg shadow-xl"
+            effect="blur"
+            threshold={100}
           />
           <button
             onClick={togglePlayPause}
@@ -152,7 +158,7 @@ const FeaturedTrack = ({ track }: { track: Track }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <SiBeatport className="w-5 h-5" />
+              <SiBeatport />
               Comprar en Beatport
             </motion.a>
           )}
@@ -165,17 +171,52 @@ const FeaturedTrack = ({ track }: { track: Track }) => {
 // Componente para las tarjetas de tracks en el carrusel
 const TrackCard = ({ track }: { track: Track }) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const togglePlayPause = () => {
+  const fetchAudioUrl = async () => {
+    setIsLoading(true);
+    try {
+      const basePath = `artist/${track.artist.nickname}`;
+      const audioPath = `${basePath}/${track.filename}`;
+      const { data } = supabase.storage.from("media").getPublicUrl(audioPath);
+
+      if (data?.publicUrl) {
+        setAudioUrl(data.publicUrl);
+        // Ahora que tenemos la URL, la asignamos al elemento audio
+        if (audioRef.current) {
+          audioRef.current.src = data.publicUrl;
+          await audioRef.current.play();
+          setIsPlaying(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching audio URL:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const togglePlayPause = async () => {
     if (!audioRef.current) return;
+
+    if (!audioUrl) {
+      await fetchAudioUrl();
+      return;
+    }
 
     if (isPlaying) {
       audioRef.current.pause();
+      setIsPlaying(false);
     } else {
-      audioRef.current.play();
+      try {
+        await audioRef.current.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.error("Error playing audio:", error);
+      }
     }
-    setIsPlaying(!isPlaying);
   };
 
   useEffect(() => {
@@ -187,6 +228,9 @@ const TrackCard = ({ track }: { track: Track }) => {
 
     return () => {
       audio.removeEventListener("ended", handleEnded);
+      // Asegurarnos de detener y limpiar el audio al desmontar
+      audio.pause();
+      audio.src = "";
     };
   }, []);
 
@@ -196,18 +240,27 @@ const TrackCard = ({ track }: { track: Track }) => {
       animate={{ opacity: 1, y: 0 }}
       className="cursor-pointer flex-shrink-0 w-[280px]"
     >
+      {/* Siempre renderizamos el elemento audio */}
+      <audio ref={audioRef} preload="none" />
+
       <div className="relative aspect-square mb-4">
         <div className="absolute inset-0 rounded-xl overflow-hidden hover:scale-95 transition-transform duration-300">
-          <img
+          <LazyLoadImage
             src={track.artworkUrl || "/default-artwork.jpg"}
             alt={track.title}
             className="w-full h-full object-cover"
+            effect="blur"
+            threshold={100}
           />
           <div
             className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
             onClick={togglePlayPause}
           >
-            {isPlaying ? (
+            {isLoading ? (
+              <div className="w-16 h-16 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-mantra-gold"></div>
+              </div>
+            ) : isPlaying ? (
               <Pause className="w-16 h-16 text-mantra-gold" />
             ) : (
               <Play className="w-16 h-16 text-mantra-gold" />
@@ -228,9 +281,6 @@ const TrackCard = ({ track }: { track: Track }) => {
             {track.artist?.nickname || "Artista no disponible"}
           </p>
         </div>
-
-        {/* Audio element oculto */}
-        <audio ref={audioRef} src={track.audioUrl || ""} />
 
         {/* Indicador de reproducción */}
         {isPlaying && (
@@ -259,7 +309,7 @@ const TrackCard = ({ track }: { track: Track }) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <SiBeatport className="w-4 h-4" />
+            <SiBeatport />
             Comprar en Beatport
           </motion.a>
         )}

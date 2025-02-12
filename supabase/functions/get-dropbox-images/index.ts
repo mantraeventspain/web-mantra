@@ -14,7 +14,7 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
-  "Cache-Control": "public, max-age=3600", // Cache por 1 hora
+  "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800",
 };
 
 const BATCH_SIZE = 25; // Dropbox recomienda no más de 25 archivos por lote

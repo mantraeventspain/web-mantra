@@ -9,13 +9,19 @@ export default {
       },
       colors: {
         mantra: {
-          gold: "#D4A657", // Color dorado principal
-          darkGold: "#B38B45", // Versión más oscura del dorado
-          blue: "#1A2B3C",
-          darkBlue: "#0F1A24",
+          gold: "#C85627", // Naranja terracota principal (más cálido y terroso)
+          darkGold: "#8B3613", // Marrón rojizo oscuro para iconos
+          orange: "#E67E22", // Naranja tierra brillante
+          darkOrange: "#6B2B0E", // Marrón oscuro rojizo
+          warmBlack: "#2C1810", // Marrón muy oscuro
+          light: "#F4A460", // Arena dorada cálida
+
+          // Fondos y gradientes
+          blue: "#1E1410", // Marrón muy oscuro (reemplaza el azul)
+          darkBlue: "#0D0807", // Casi negro con tinte marrón
         },
-        primary: "#6366f1",
-        secondary: "#4f46e5",
+        primary: "#C85627", // Mismo que gold para consistencia
+        secondary: "#8B3613", // Mismo que darkGold para consistencia
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

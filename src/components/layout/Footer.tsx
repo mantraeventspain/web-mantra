@@ -1,9 +1,8 @@
 import { Facebook, Instagram, Users, ArrowUp } from "lucide-react";
-import { FaSoundcloud } from "react-icons/fa";
-import { SiBeatport } from "react-icons/si";
 import { useSiteConfig } from "../../hooks/useSiteConfig";
 import { NewsletterForm } from "../newsletter/NewsletterForm";
-
+import { SiBeatport, SiSpotify } from "react-icons/si";
+import { FaSoundcloud } from "react-icons/fa";
 export const Footer = () => {
   const { config } = useSiteConfig();
 
@@ -19,7 +18,7 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-mantra-blue via-mantra-darkBlue to-black">
+    <footer className="bg-gradient-to-b from-mantra-warmBlack via-mantra-darkOrange/5 to-black">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
@@ -56,7 +55,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <FaSoundcloud className="w-6 h-6" />
+                <FaSoundcloud />
               </a>
               <a
                 href={config.beatport_url}
@@ -65,7 +64,16 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <SiBeatport className="w-6 h-6" />
+                <SiBeatport />
+              </a>
+              <a
+                href={config.spotify_url}
+                className="text-gray-300 hover:text-mantra-gold transition-colors duration-200"
+                aria-label="Síguenos en Spotify"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <SiSpotify />
               </a>
             </div>
           </div>

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { getTemporaryLinks } from "../services/dropboxService";
 import type { Database } from "../types/database.types";
 
 type Event = Database["public"]["Tables"]["events"]["Row"] & {
@@ -39,25 +38,19 @@ export function usePastEvents() {
                 imageUrl = imageData.publicUrl;
               }
 
-              const path = `/MANTRA/${event.title}`;
-              const galleryUrls = await getTemporaryLinks(path);
-
               return {
                 ...event,
                 imageUrl,
-                galleryImages: galleryUrls,
+                galleryImages: [], // Initialize as empty array
               } as Event;
-            } catch (dropboxError) {
+            } catch (error) {
               console.error(
-                `Error al obtener imágenes para ${event.title}:`,
-                dropboxError
+                `Error al obtener imagen para ${event.title}:`,
+                error
               );
               return {
                 ...event,
-                imageUrl: event.image_url
-                  ? supabase.storage.from("media").getPublicUrl(event.image_url)
-                      .data.publicUrl
-                  : null,
+                imageUrl: null,
                 galleryImages: [],
               } as Event;
             }

@@ -12,7 +12,7 @@ interface UseEventGalleryProps {
 
 export function useEventGallery({
   eventTitle,
-  imagesPerPage = 25,
+  imagesPerPage = 10,
 }: UseEventGalleryProps) {
   const [images, setImages] = useState<ImageUrl[]>([]);
   const [isLoading, setIsLoading] = useState(false);

@@ -23,6 +23,13 @@ const supabase = createClient(
 
 console.log("Hello from Functions!");
 
+const getPublicUrl = (filename: string) => {
+  const { data } = supabase.storage.from("email-assets").getPublicUrl(filename);
+  return data.publicUrl;
+};
+
+const logoUrl = getPublicUrl("logo.png");
+
 // Función para obtener la URL del avatar del artista
 async function getArtistAvatarUrl(normalizedNickname: string) {
   try {
@@ -112,23 +119,23 @@ serve(async (req) => {
       .map(
         (artist) => `
       <div style="margin-bottom: 40px; text-align: center;">
-        <div style="background: linear-gradient(to bottom, rgba(212, 166, 87, 0.1), rgba(15, 26, 36, 0.9)); border-radius: 16px; padding: 30px; border: 1px solid rgba(212, 166, 87, 0.2);">
+        <div style="background: linear-gradient(to bottom, rgba(200, 86, 39, 0.1), rgba(30, 20, 16, 0.9)); border-radius: 16px; padding: 30px; border: 1px solid rgba(200, 86, 39, 0.2);">
           ${
             artist.avatarUrl
               ? `
             <div style="margin-bottom: 20px;">
               <img src="${artist.avatarUrl}" 
                    alt="${artist.artists.nickname}" 
-                   style="width: 200px; height: 200px; border-radius: 50%; border: 3px solid #D4A657; object-fit: cover;">
+                   style="width: 200px; height: 200px; border-radius: 50%; border: 3px solid #C85627; object-fit: cover;">
             </div>
           `
               : ""
           }
-          <h3 style="color: #D4A657; font-size: 28px; margin: 0 0 10px 0;">
+          <h3 style="color: #C85627; font-size: 28px; margin: 0 0 10px 0;">
             ${artist.artists.nickname}
           </h3>
-          <span style="display: inline-block; background-color: rgba(212, 166, 87, 0.2); color: #D4A657; padding: 8px 20px; border-radius: 20px; font-size: 16px;">
-            Artista Principal
+          <span style="display: inline-block; background-color: rgba(200, 86, 39, 0.2); color: #C85627; padding: 8px 20px; border-radius: 20px; font-size: 16px;">
+            Headliner
           </span>
           ${
             artist.start_time
@@ -153,13 +160,13 @@ serve(async (req) => {
         ${supportArtists
           .map(
             (artist) => `
-          <div style="background: rgba(15, 26, 36, 0.8); border-radius: 12px; padding: 20px; border: 1px solid rgba(212, 166, 87, 0.1); text-align: center; margin-top: 10px;">
+          <div style="background: rgba(30, 20, 16, 0.8); border-radius: 12px; padding: 20px; border: 1px solid rgba(200, 86, 39, 0.1); text-align: center; margin-top: 10px;">
             ${
               artist.avatarUrl
                 ? `
               <img src="${artist.avatarUrl}" 
                    alt="${artist.artists.nickname}" 
-                   style="width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(212, 166, 87, 0.5); object-fit: cover; margin-bottom: 15px;">
+                   style="width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(200, 86, 39, 0.5); object-fit: cover; margin-bottom: 15px;">
             `
                 : ""
             }
@@ -169,7 +176,7 @@ serve(async (req) => {
             ${
               artist.start_time
                 ? `
-              <p style="color: #D4A657; margin: 5px 0; font-size: 16px;">
+              <p style="color: #C85627; margin: 5px 0; font-size: 16px;">
                 ${new Date(artist.start_time).toLocaleTimeString("es-ES", {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -188,7 +195,7 @@ serve(async (req) => {
     // Enviar emails
     const emailPromises = subscribers.map((email: string) =>
       resend.emails.send({
-        from: "Mantra Events <onboarding@resend.dev>",
+        from: "Mantra Events <newsletter@mantraevent.es>",
         to: email,
         subject: `¡No te pierdas nuestro próximo evento: ${event.title}!`,
         html: `
@@ -199,11 +206,18 @@ serve(async (req) => {
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <title>${event.title}</title>
             </head>
-            <body style="margin: 0; padding: 0; background-color: #0F1A24; color: #ffffff; font-family: Arial, sans-serif;">
+            <body style="margin: 0; padding: 0; background-color: #1E1410; color: #ffffff; font-family: Arial, sans-serif;">
               <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                <!-- Logo Header -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                  <img src="${logoUrl}" 
+                       alt="Mantra Events Logo" 
+                       style="width: 150px; height: auto; margin: 0 auto;">
+                </div>
+
                 <!-- Header con imagen del evento -->
-                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(15, 26, 36, 1), transparent); padding: 40px 20px 20px;">
-                  <h1 style="color: #D4A657; font-size: 32px; margin: 0 0 10px 0; text-align: center;">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(30, 20, 16, 1), transparent); padding: 40px 20px 20px;">
+                  <h1 style="color: #C85627; font-size: 32px; margin: 0 0 10px 0; text-align: center;">
                     ${event.title}
                   </h1>
                 </div>
@@ -211,8 +225,8 @@ serve(async (req) => {
                 <!-- Información del evento -->
                 <div style="max-width: 500px; margin: 0 auto;">
                   <div style="display: flex; justify-content: space-between; margin-bottom: 60px;">
-                    <div style="flex: 1; background: rgba(212, 166, 87, 0.1); padding: 15px 30px; border-radius: 12px; text-align: center; margin-right: 20px;">
-                      <span style="display: block; color: #D4A657; margin-bottom: 5px;">Fecha</span>
+                    <div style="flex: 1; background: rgba(200, 86, 39, 0.1); padding: 15px 30px; border-radius: 12px; text-align: center; margin-right: 20px;">
+                      <span style="display: block; color: #C85627; margin-bottom: 5px;">Fecha</span>
                       <time style="color: #ffffff; font-size: 18px;">
                         ${new Date(event.date).toLocaleDateString("es-ES", {
                           day: "numeric",
@@ -221,8 +235,8 @@ serve(async (req) => {
                         })}
                       </time>
                     </div>
-                    <div style="flex: 1; background: rgba(212, 166, 87, 0.1); padding: 15px 30px; border-radius: 12px; text-align: center;">
-                      <span style="display: block; color: #D4A657; margin-bottom: 5px;">Ubicación</span>
+                    <div style="flex: 1; background: rgba(200, 86, 39, 0.1); padding: 15px 30px; border-radius: 12px; text-align: center;">
+                      <span style="display: block; color: #C85627; margin-bottom: 5px;">Ubicación</span>
                       <address style="color: #ffffff; font-size: 18px; font-style: normal;">
                         ${event.location}
                       </address>
@@ -232,7 +246,7 @@ serve(async (req) => {
 
                 <!-- Line-up -->
                 <div style="margin-bottom: 40px;">
-                  <h2 style="color: #D4A657; text-align: center; font-size: 24px; margin-bottom: 30px;">
+                  <h2 style="color: #C85627; text-align: center; font-size: 24px; margin-bottom: 30px;">
                     Line-up
                   </h2>
                   ${headlinersHtml}
@@ -240,14 +254,14 @@ serve(async (req) => {
                 </div>
 
                 <!-- Footer -->
-                <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(212, 166, 87, 0.2);">
+                <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(200, 86, 39, 0.2);">
                   <p style="color: #666666; font-size: 12px;">
                     © ${new Date().getFullYear()} Mantra Events. Todos los derechos reservados.<br>
                     Si no deseas recibir más emails, puedes 
                     <a href="${Deno.env.get(
                       "SUPABASE_URL"
                     )}/functions/v1/newsletter-unsubscribe?email=${email}" 
-                       style="color: #D4A657;">
+                       style="color: #C85627;">
                       darte de baja aquí
                     </a>
                   </p>
@@ -291,3 +305,8 @@ serve(async (req) => {
     --data '{"name":"Functions"}'
 
 */
+
+// Como desplegar la funcion en supabase, mediante la terminal:
+// 1. Copiar el codigo de la funcion
+// 2. Ir a la terminal y ejecutar el comando:
+// supabase functions deploy send-newsletter

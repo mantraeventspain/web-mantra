@@ -7,7 +7,7 @@
   font-display: swap;
 }
 
-@font-face {
+/* @font-face {
   font-family: "AbhayaLibre";
   src: url("/src/assets/fonts/AbhayaLibre-Medium.ttf") format("truetype");
   font-weight: 500;
@@ -37,7 +37,7 @@
   font-weight: 800;
   font-style: normal;
   font-display: swap;
-}
+} */
 
 @tailwind base;
 @tailwind components;

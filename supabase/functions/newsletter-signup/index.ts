@@ -74,7 +74,7 @@ serve(async (req) => {
 
     // Enviar email de bienvenida
     const { data, error: resendError } = await resend.emails.send({
-      from: "Mantra Events <onboarding@resend.dev>",
+      from: "Mantra Events <newsletter@mantraevent.es>",
       to: email,
       subject: "¡Bienvenido a la familia Mantra Events! 🎉",
       html: `
@@ -85,7 +85,7 @@ serve(async (req) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Bienvenido a Mantra Events</title>
           </head>
-          <body style="margin: 0; padding: 0; background-color: #0F1A24; color: #ffffff; font-family: Arial, sans-serif;">
+          <body style="margin: 0; padding: 0; background-color: #1E1410; color: #ffffff; font-family: Arial, sans-serif;">
             <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
               <!-- Header con logo -->
               <div style="text-align: center; margin-bottom: 30px;">
@@ -93,8 +93,8 @@ serve(async (req) => {
               </div>
               
               <!-- Contenido principal -->
-              <div style="background-color: rgba(15, 26, 36, 0.8); border: 1px solid rgba(212, 166, 87, 0.2); border-radius: 12px; padding: 30px; margin-bottom: 30px;">
-                <h1 style="color: #D4A657; text-align: center; font-size: 24px; margin-bottom: 20px;">
+              <div style="background-color: rgba(30, 20, 16, 0.8); border: 1px solid rgba(200, 86, 39, 0.2); border-radius: 12px; padding: 30px; margin-bottom: 30px;">
+                <h1 style="color: #C85627; text-align: center; font-size: 24px; margin-bottom: 20px;">
                   ¡Bienvenido a la familia Mantra Events!
                 </h1>
                 
@@ -112,7 +112,7 @@ serve(async (req) => {
               
               <!-- Social Media -->
               <div style="text-align: center; margin-top: 30px;">
-                <p style="color: #D4A657; margin-bottom: 15px;">Síguenos en redes sociales</p>
+                <p style="color: #C85627; margin-bottom: 15px;">Síguenos en redes sociales</p>
                 <div>
                   <a href="${
                     configObj.facebook_url
@@ -138,12 +138,12 @@ serve(async (req) => {
               </div>
               
               <!-- Footer -->
-              <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(212, 166, 87, 0.2);">
-                <p style="color: #666; font-size: 12px;">
+              <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(200, 86, 39, 0.2);">
+                <p style="color: #F4A460; font-size: 12px;">
                   © ${new Date().getFullYear()} Mantra Events. Todos los derechos reservados.<br>
                   Si no deseas recibir más emails, puedes <a href="${Deno.env.get(
                     "SUPABASE_URL"
-                  )}/functions/v1/newsletter-unsubscribe?email=${email}" style="color: #D4A657;">darte de baja aquí</a>
+                  )}/functions/v1/newsletter-unsubscribe?email=${email}" style="color: #C85627;">darte de baja aquí</a>
                 </p>
               </div>
             </div>

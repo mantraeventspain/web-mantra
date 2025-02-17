@@ -16,6 +16,8 @@ const ALLOWED_AUDIO_TYPES = [
   "audio/wav",
   "audio/ogg",
   "video/mp4",
+  "audio/x-m4a",
+  "audio/mp4",
 ];
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -121,6 +123,24 @@ export const TrackForm = ({ track, onSuccess, onCancel }: TrackFormProps) => {
                   placeholder="https://www.beatport.com/track/..."
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  URL de SoundCloud
+                </label>
+                <input
+                  type="url"
+                  value={formData.soundcloudUrl || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      soundcloudUrl: e.target.value,
+                    }))
+                  }
+                  className="w-full px-4 py-2 bg-black/30 border border-mantra-gold/20 rounded-lg text-white"
+                  placeholder="https://soundcloud.com/..."
+                />
+              </div>
             </div>
 
             <div>
@@ -135,7 +155,7 @@ export const TrackForm = ({ track, onSuccess, onCancel }: TrackFormProps) => {
                   if (file) {
                     if (!ALLOWED_AUDIO_TYPES.includes(file.type)) {
                       alert(
-                        "El archivo debe ser un audio (MP3, WAV, OGG, MP4)"
+                        "El archivo debe ser un audio (MP3, WAV, OGG, MP4, M4A)"
                       );
                       e.target.value = "";
                       return;
@@ -147,7 +167,7 @@ export const TrackForm = ({ track, onSuccess, onCancel }: TrackFormProps) => {
                 className="w-full px-4 py-2 bg-black/30 border border-mantra-gold/20 rounded-lg text-white"
               />
               <p className="mt-1 text-sm text-gray-400">
-                Formatos permitidos: MP3, WAV, OGG, MP4
+                Formatos permitidos: MP3, WAV, OGG, MP4, M4A
               </p>
             </div>
 

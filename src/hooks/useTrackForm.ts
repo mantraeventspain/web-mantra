@@ -9,6 +9,7 @@ interface TrackFormData {
   artistId: string;
   releaseDate: string | null;
   beatportUrl: string | null;
+  soundcloudUrl: string | null;
   isFeatured: boolean;
 }
 
@@ -22,18 +23,41 @@ async function deleteTrackFiles(track: Track) {
   if (!artistData) return;
 
   const basePath = `artist/${artistData.nickname}`;
+
+  // Listar todos los archivos en el directorio del artista
+  const { data: files } = await supabase.storage.from("media").list(basePath);
+
+  if (!files) return;
+
   const filesToDelete = [];
 
-  if (track.filename) {
-    filesToDelete.push(`${basePath}/${track.filename}`);
-  }
-  if (track.artworkUrl) {
-    filesToDelete.push(`${basePath}/${track.artworkUrl}`);
+  // Buscar archivos que coincidan con el nombre base del track (sin extensión)
+  const trackBaseName = track.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const artworkBaseName = `${trackBaseName}-icon`;
+
+  for (const file of files) {
+    // Comprobar si el archivo coincide con el patrón del track o artwork
+    if (
+      file.name.startsWith(trackBaseName + ".") ||
+      file.name.startsWith(artworkBaseName + ".")
+    ) {
+      filesToDelete.push(`${basePath}/${file.name}`);
+    }
   }
 
   if (filesToDelete.length > 0) {
     await supabase.storage.from("media").remove(filesToDelete);
   }
+}
+
+async function deleteTrackFile(basePath: string, filename: string | null) {
+  if (!filename) return;
+
+  const { error } = await supabase.storage
+    .from("media")
+    .remove([`${basePath}/${filename}`]);
+
+  if (error) throw error;
 }
 
 export async function deleteTrack(track: Track) {
@@ -59,6 +83,7 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
     artistId: track?.artistId || "",
     releaseDate: track?.releaseDate || null,
     beatportUrl: track?.beatportUrl || null,
+    soundcloudUrl: track?.soundcloudUrl || null,
     isFeatured: track?.isFeatured || false,
   });
 
@@ -89,7 +114,6 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
       let dataSuccess = false;
       let filesSuccess = false;
 
-      // Obtener el artista para construir la ruta base
       const { data: artistData, error: artistError } = await supabase
         .from("artists")
         .select("nickname")
@@ -102,20 +126,36 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
       let audioFilename = track?.filename;
       let artworkFilename = track?.artworkUrl;
 
-      // Procesar archivos si se han seleccionado
+      if (track?.id) {
+        const { data: currentTrack, error: trackError } = await supabase
+          .from("tracks")
+          .select("filename, filename_icon")
+          .eq("id", track.id)
+          .single();
+
+        if (trackError) throw trackError;
+
+        if (files.audio && currentTrack.filename) {
+          await deleteTrackFile(basePath, currentTrack.filename);
+        }
+
+        if (files.artwork && currentTrack.filename_icon) {
+          await deleteTrackFile(basePath, currentTrack.filename_icon);
+        }
+
+        audioFilename = files.audio ? audioFilename : currentTrack.filename;
+        artworkFilename = files.artwork
+          ? artworkFilename
+          : currentTrack.filename_icon;
+      }
+
       if (files.audio || files.artwork) {
         if (files.audio) {
           const audioExt = files.audio.name.split(".").pop();
-          audioFilename = `${formData.title
+          const audioBaseName = formData.title
             .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")}.${audioExt}`;
-
-          // Eliminar archivo anterior si existe
-          if (track?.filename) {
-            await supabase.storage
-              .from("media")
-              .remove([`${basePath}/${track.filename}`]);
-          }
+            .replace(/[^a-z0-9]+/g, "-");
+          audioFilename = `${audioBaseName}.${audioExt}`;
 
           const { error: audioError } = await supabase.storage
             .from("media")
@@ -126,16 +166,10 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
 
         if (files.artwork) {
           const artworkExt = files.artwork.name.split(".").pop();
-          artworkFilename = `${formData.title
+          const artworkBaseName = `${formData.title
             .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")}-icon.${artworkExt}`;
-
-          // Eliminar archivo anterior si existe
-          if (track?.artworkUrl) {
-            await supabase.storage
-              .from("media")
-              .remove([`${basePath}/${track.artworkUrl}`]);
-          }
+            .replace(/[^a-z0-9]+/g, "-")}-icon`;
+          artworkFilename = `${artworkBaseName}.${artworkExt}`;
 
           const { error: artworkError } = await supabase.storage
             .from("media")
@@ -204,8 +238,9 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
             release_date: formData.releaseDate,
             beatport_url: formData.beatportUrl,
             is_featured: formData.isFeatured,
-            ...(audioFilename && { filename: audioFilename }),
-            ...(artworkFilename && { filename_icon: artworkFilename }),
+            soundcloud_url: formData.soundcloudUrl,
+            filename: audioFilename,
+            filename_icon: artworkFilename,
           })
           .eq("id", track.id);
 
@@ -226,6 +261,7 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
           release_date: formData.releaseDate,
           beatport_url: formData.beatportUrl,
           is_featured: formData.isFeatured,
+          soundcloud_url: formData.soundcloudUrl,
           filename: audioFilename!,
           filename_icon: artworkFilename || null,
         });

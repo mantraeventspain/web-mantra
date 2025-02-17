@@ -7,15 +7,19 @@ interface SocialLinks {
   soundcloud_url: string;
   tickets_url: string;
   beatport_url: string;
+  spotify_url: string;
+  soundcloud_mantra_url: string;
 }
 
-export const SiteConfigManager = () => {
+const SiteConfigManager = () => {
   const [links, setLinks] = useState<SocialLinks>({
     facebook_url: "",
     instagram_url: "",
     soundcloud_url: "",
     tickets_url: "",
     beatport_url: "",
+    spotify_url: "",
+    soundcloud_mantra_url: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +39,8 @@ export const SiteConfigManager = () => {
           "soundcloud_url",
           "tickets_url",
           "beatport_url",
+          "spotify_url",
+          "soundcloud_mantra_url",
         ]);
 
       if (error) throw error;
@@ -158,6 +164,39 @@ export const SiteConfigManager = () => {
             placeholder="URL externa o ruta interna"
           />
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            URL de Spotify
+          </label>
+          <input
+            type="url"
+            value={links.spotify_url}
+            onChange={(e) =>
+              setLinks((prev) => ({ ...prev, spotify_url: e.target.value }))
+            }
+            className="w-full px-4 py-2 bg-black/30 border border-mantra-gold/20 rounded-lg text-white"
+            placeholder="https://open.spotify.com/playlist/..."
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            URL de SoundCloud Mantra Event
+          </label>
+          <input
+            type="url"
+            value={links.soundcloud_mantra_url}
+            onChange={(e) =>
+              setLinks((prev) => ({
+                ...prev,
+                soundcloud_mantra_url: e.target.value,
+              }))
+            }
+            className="w-full px-4 py-2 bg-black/30 border border-mantra-gold/20 rounded-lg text-white"
+            placeholder="https://soundcloud.com/..."
+          />
+        </div>
       </div>
 
       {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -172,3 +211,5 @@ export const SiteConfigManager = () => {
     </form>
   );
 };
+
+export default SiteConfigManager;

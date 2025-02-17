@@ -1,7 +1,10 @@
-import { SiBeatport } from "react-icons/si";
+import { FaSoundcloud } from "react-icons/fa";
 import { useEventLineupById } from "../../hooks/useEventLineupById";
-import { FaInstagram, FaSoundcloud } from "react-icons/fa";
 import { SectionTitle } from "../ui/SectionTitle";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
+import { Instagram } from "lucide-react";
+import { SiBeatport } from "react-icons/si";
 
 interface EventLineupProps {
   eventId?: string | null;
@@ -76,85 +79,99 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
 
       <SectionTitle title="Line-up" />
 
-      {/* Artista Principal - Añadir efectos de hover y animaciones */}
-      {lineup
-        .filter((artist) => artist.isHeadliner)
-        .map((headliner) => (
-          <div key={headliner.id} className="mb-12 relative">
-            {/* Añadir efecto de brillo */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-mantra-gold/20 to-mantra-gold/0 rounded-xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity"></div>
+      {/* Artistas Principales */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        {lineup
+          .filter((artist) => artist.isHeadliner)
+          .map((headliner, index, array) => (
+            <div
+              key={headliner.id}
+              className={`relative ${
+                // Si es el único headliner o es impar y el último, ocupar todo el ancho
+                array.length === 1 ||
+                (array.length % 2 !== 0 && index === array.length - 1)
+                  ? "lg:col-span-2 max-w-3xl mx-auto w-full"
+                  : ""
+              }`}
+            >
+              {/* Efecto de brillo */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-mantra-gold/20 to-mantra-gold/0 rounded-xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity"></div>
 
-            <div className="relative bg-gradient-to-br from-mantra-blue/60 to-mantra-blue/40 rounded-xl p-8 backdrop-blur-lg border border-mantra-gold/20 transform hover:scale-[1.02] transition-all duration-300 shadow-xl">
-              <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-mantra-gold px-4 sm:px-6 py-2 rounded-full text-black text-xs sm:text-sm font-bold tracking-wider uppercase whitespace-nowrap">
-                Artista Principal
-              </span>
-              <div className="flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-12">
-                <div className="relative w-48 h-48 md:w-64 md:h-64 group">
-                  {headliner.avatarUrl ? (
-                    <img
-                      src={headliner.avatarUrl}
-                      alt={headliner.nickname}
-                      className="w-full h-full object-cover rounded-full ring-4 ring-mantra-gold/50 group-hover:ring-mantra-gold transition-all duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full rounded-full bg-mantra-blue flex items-center justify-center ring-4 ring-mantra-gold/50">
-                      <span className="text-6xl text-mantra-gold">
-                        {headliner.nickname.charAt(0).toUpperCase()}
-                      </span>
+              <div className="relative bg-gradient-to-br from-mantra-blue/60 to-mantra-blue/40 rounded-xl p-8 backdrop-blur-lg border border-mantra-gold/20 transform hover:scale-[1.02] transition-all duration-300 shadow-xl">
+                <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-mantra-gold px-4 sm:px-6 py-2 rounded-full text-black text-xs sm:text-sm font-bold tracking-wider uppercase whitespace-nowrap">
+                  Headliner
+                </span>
+                <div className="flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-12">
+                  <div className="relative w-48 h-48 group">
+                    {headliner.avatarUrl ? (
+                      <LazyLoadImage
+                        src={headliner.avatarUrl}
+                        alt={headliner.nickname}
+                        className="w-full h-full object-cover rounded-full ring-4 ring-mantra-gold/50 group-hover:ring-mantra-gold transition-all duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full rounded-full bg-mantra-blue flex items-center justify-center ring-4 ring-mantra-gold/50">
+                        <span className="text-6xl text-mantra-gold">
+                          {headliner.nickname.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-4">
+                      {headliner.instagram_username && (
+                        <a
+                          href={`https://instagram.com/${headliner.instagram_username}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-mantra-gold text-black p-3 rounded-full hover:scale-110 transition-transform"
+                        >
+                          <Instagram size={20} />
+                        </a>
+                      )}
+                      {headliner.beatport_url && (
+                        <a
+                          href={headliner.beatport_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-mantra-gold text-black p-3 rounded-full hover:scale-110 transition-transform"
+                        >
+                          <SiBeatport />
+                        </a>
+                      )}
+                      {headliner.soundcloud_url && (
+                        <a
+                          href={headliner.soundcloud_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-mantra-gold text-black p-3 rounded-full hover:scale-110 transition-transform"
+                        >
+                          <FaSoundcloud />
+                        </a>
+                      )}
                     </div>
-                  )}
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-4">
-                    {headliner.instagram_username && (
-                      <a
-                        href={`https://instagram.com/${headliner.instagram_username}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-mantra-gold text-black p-3 rounded-full hover:scale-110 transition-transform"
-                      >
-                        <FaInstagram size={20} />
-                      </a>
-                    )}
-                    {headliner.beatport_url && (
-                      <a
-                        href={headliner.beatport_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-mantra-gold text-black p-3 rounded-full hover:scale-110 transition-transform"
-                      >
-                        <SiBeatport size={20} />
-                      </a>
-                    )}
-                    {headliner.soundcloud_url && (
-                      <a
-                        href={headliner.soundcloud_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-mantra-gold text-black p-3 rounded-full hover:scale-110 transition-transform"
-                      >
-                        <FaSoundcloud size={20} />
-                      </a>
+                  </div>
+                  <div className="text-center md:text-left flex-1">
+                    <h4 className="text-4xl font-bold text-white mb-3">
+                      {headliner.nickname}
+                    </h4>
+                    {headliner.startTime && (
+                      <div className="inline-block bg-mantra-gold/20 px-6 py-2 rounded-full">
+                        <p className="text-mantra-gold text-xl font-medium">
+                          {new Date(headliner.startTime).toLocaleTimeString(
+                            [],
+                            {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }
+                          )}
+                        </p>
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="text-center md:text-left flex-1">
-                  <h4 className="text-4xl font-bold text-white mb-3">
-                    {headliner.nickname}
-                  </h4>
-                  {headliner.startTime && (
-                    <div className="inline-block bg-mantra-gold/20 px-6 py-2 rounded-full">
-                      <p className="text-mantra-gold text-xl font-medium">
-                        {new Date(headliner.startTime).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </p>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+      </div>
 
       {/* Artistas Secundarios - Mejorar la presentación */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -168,7 +185,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
               <div className="flex flex-col items-center space-y-4">
                 <div className="relative w-32 h-32">
                   {artist.avatarUrl ? (
-                    <img
+                    <LazyLoadImage
                       src={artist.avatarUrl}
                       alt={artist.nickname}
                       className="w-full h-full object-cover rounded-full ring-2 ring-mantra-gold/30 group-hover:ring-mantra-gold/50 transition-all duration-300"
@@ -203,7 +220,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
                         rel="noopener noreferrer"
                         className="text-mantra-gold hover:text-white transition-colors"
                       >
-                        <FaInstagram size={24} />
+                        <Instagram size={24} />
                       </a>
                     )}
                     {artist.beatport_url && (
@@ -213,7 +230,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
                         rel="noopener noreferrer"
                         className="text-mantra-gold hover:text-white transition-colors"
                       >
-                        <SiBeatport size={24} />
+                        <SiBeatport />
                       </a>
                     )}
                     {artist.soundcloud_url && (
@@ -223,7 +240,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
                         rel="noopener noreferrer"
                         className="text-mantra-gold hover:text-white transition-colors"
                       >
-                        <FaSoundcloud size={24} />
+                        <FaSoundcloud />
                       </a>
                     )}
                   </div>

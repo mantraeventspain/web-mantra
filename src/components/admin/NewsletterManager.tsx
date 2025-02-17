@@ -9,7 +9,7 @@ interface Subscriber {
   status: string | null;
 }
 
-export const NewsletterManager = () => {
+const NewsletterManager = () => {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +84,7 @@ export const NewsletterManager = () => {
 
     try {
       setIsLoading(true);
-      const batchSize = 50; // Enviar en lotes de 50 emails
+      const batchSize = 2; // Enviar en lotes de 50 emails
       const emails = subscribers.map((sub) => sub.email);
       const batches = [];
 
@@ -112,7 +112,7 @@ export const NewsletterManager = () => {
         if (!response.ok) throw new Error("Error al enviar la newsletter");
 
         // Esperar un breve momento entre lotes para evitar sobrecarga
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1500));
       }
 
       alert("Newsletter enviada correctamente");
@@ -215,3 +215,5 @@ export const NewsletterManager = () => {
     </div>
   );
 };
+
+export default NewsletterManager;

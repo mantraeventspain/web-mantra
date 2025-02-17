@@ -11,6 +11,9 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { supabase } from "../../lib/supabase";
 import { SiBeatport } from "react-icons/si";
+import { FaSoundcloud } from "react-icons/fa";
+import { useAudio } from "../../contexts/AudioContext";
+
 const TracksSection = () => {
   const { tracks } = useTracks();
   const featuredTrack = tracks.find((track) => track.isFeatured);
@@ -48,11 +51,11 @@ const FeaturedTrack = ({ track }: { track: Track }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null);
   const waveformRef = useRef<HTMLDivElement>(null);
+  const { currentlyPlaying, setCurrentlyPlaying } = useAudio();
 
   useEffect(() => {
     if (!waveformRef.current || !audioUrl) return;
 
-    // Destruir la instancia anterior si existe
     if (wavesurfer) {
       wavesurfer.destroy();
     }
@@ -74,16 +77,39 @@ const FeaturedTrack = ({ track }: { track: Track }) => {
     setWavesurfer(ws);
     setIsPlaying(false);
 
-    ws.on("finish", () => setIsPlaying(false));
+    ws.on("finish", () => {
+      setIsPlaying(false);
+      setCurrentlyPlaying(null);
+    });
 
     return () => {
       ws.destroy();
     };
   }, [audioUrl]);
 
+  // Detener reproducción si otro track comienza a reproducirse
+  useEffect(() => {
+    if (
+      currentlyPlaying &&
+      currentlyPlaying !== track.id &&
+      isPlaying &&
+      wavesurfer
+    ) {
+      wavesurfer.pause();
+      setIsPlaying(false);
+    }
+  }, [currentlyPlaying]);
+
   const togglePlayPause = () => {
     if (!wavesurfer) return;
-    wavesurfer.playPause();
+
+    if (isPlaying) {
+      wavesurfer.pause();
+      setCurrentlyPlaying(null);
+    } else {
+      setCurrentlyPlaying(track.id);
+      wavesurfer.play();
+    }
     setIsPlaying(!isPlaying);
   };
 
@@ -148,20 +174,37 @@ const FeaturedTrack = ({ track }: { track: Track }) => {
             className="w-full rounded-lg overflow-hidden"
           />
 
-          {/* Botón de Beatport */}
-          {track.beatportUrl && (
-            <motion.a
-              href={track.beatportUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#02FF95] text-black px-6 py-3 rounded-full font-semibold hover:bg-[#00E085] transition-colors"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <SiBeatport />
-              Comprar en Beatport
-            </motion.a>
-          )}
+          {/* Botones de acción */}
+          <div className="flex flex-wrap gap-4">
+            {track.beatportUrl && (
+              <motion.a
+                href={track.beatportUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#02FF95] text-black px-6 py-3 rounded-full font-semibold hover:bg-[#00E085] transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <SiBeatport />
+                <span className="sm:inline hidden">Comprar en Beatport</span>
+                <span className="sm:hidden inline">Comprar</span>
+              </motion.a>
+            )}
+
+            {track.soundcloudUrl && (
+              <motion.a
+                href={track.soundcloudUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#ff5500]/10 hover:bg-[#ff5500] text-[#ff5500] hover:text-white px-6 py-3 rounded-full font-semibold transition-colors"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <FaSoundcloud className="text-xl" />
+                <span className="sm:inline hidden">Escuchar en SoundCloud</span>
+              </motion.a>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>
@@ -174,6 +217,19 @@ const TrackCard = ({ track }: { track: Track }) => {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const { currentlyPlaying, setCurrentlyPlaying } = useAudio();
+
+  useEffect(() => {
+    if (
+      currentlyPlaying &&
+      currentlyPlaying !== track.id &&
+      isPlaying &&
+      audioRef.current
+    ) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+  }, [currentlyPlaying]);
 
   const fetchAudioUrl = async () => {
     setIsLoading(true);
@@ -184,9 +240,9 @@ const TrackCard = ({ track }: { track: Track }) => {
 
       if (data?.publicUrl) {
         setAudioUrl(data.publicUrl);
-        // Ahora que tenemos la URL, la asignamos al elemento audio
         if (audioRef.current) {
           audioRef.current.src = data.publicUrl;
+          setCurrentlyPlaying(track.id);
           await audioRef.current.play();
           setIsPlaying(true);
         }
@@ -208,9 +264,11 @@ const TrackCard = ({ track }: { track: Track }) => {
 
     if (isPlaying) {
       audioRef.current.pause();
+      setCurrentlyPlaying(null);
       setIsPlaying(false);
     } else {
       try {
+        setCurrentlyPlaying(track.id);
         await audioRef.current.play();
         setIsPlaying(true);
       } catch (error) {
@@ -223,12 +281,15 @@ const TrackCard = ({ track }: { track: Track }) => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    const handleEnded = () => setIsPlaying(false);
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setCurrentlyPlaying(null);
+    };
+
     audio.addEventListener("ended", handleEnded);
 
     return () => {
       audio.removeEventListener("ended", handleEnded);
-      // Asegurarnos de detener y limpiar el audio al desmontar
       audio.pause();
       audio.src = "";
     };

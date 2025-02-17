@@ -54,11 +54,12 @@ export function useTracks() {
             artist: track.artists,
             artworkUrl: artworkData?.publicUrl || null,
             audioUrl: audioUrl,
+            soundcloudUrl: track.soundcloud_url,
           };
         })
       );
 
-      setTracks(tracksWithUrls);
+      setTracks(tracksWithUrls as Track[]);
     } catch (e) {
       setError(e instanceof Error ? e : new Error("Error desconocido"));
     } finally {

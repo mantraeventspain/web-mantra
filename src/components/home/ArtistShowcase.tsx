@@ -35,7 +35,7 @@ const ArtistShowcase = () => {
   return (
     <>
       <div className="container mx-auto px-4">
-        <SectionTitle title="Artistas" />
+        <SectionTitle title="Artistas Invitados" />
         <ScrollableSection className="py-4">
           <div className="flex gap-8 px-4">
             {artists.map((artist, index) => (

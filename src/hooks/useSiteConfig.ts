@@ -7,6 +7,8 @@ interface SiteConfig {
   instagram_url?: string;
   soundcloud_url?: string;
   beatport_url?: string;
+  spotify_url?: string;
+  soundcloud_mantra_url?: string;
 }
 
 export function useSiteConfig() {
@@ -16,6 +18,8 @@ export function useSiteConfig() {
     instagram_url: "https://www.instagram.com/mantra_event/",
     soundcloud_url: "https://soundcloud.com/mantra-parties",
     beatport_url: "https://beatport.com/mantra-events",
+    spotify_url: "https://open.spotify.com/playlist/7y7777777777777777777777",
+    soundcloud_mantra_url: "https://soundcloud.com/mantra-parties",
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -32,6 +36,8 @@ export function useSiteConfig() {
             "instagram_url",
             "soundcloud_url",
             "beatport_url",
+            "spotify_url",
+            "soundcloud_mantra_url",
           ]);
 
         if (error) throw error;

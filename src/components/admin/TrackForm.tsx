@@ -123,6 +123,24 @@ export const TrackForm = ({ track, onSuccess, onCancel }: TrackFormProps) => {
                   placeholder="https://www.beatport.com/track/..."
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  URL de SoundCloud
+                </label>
+                <input
+                  type="url"
+                  value={formData.soundcloudUrl || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      soundcloudUrl: e.target.value,
+                    }))
+                  }
+                  className="w-full px-4 py-2 bg-black/30 border border-mantra-gold/20 rounded-lg text-white"
+                  placeholder="https://soundcloud.com/..."
+                />
+              </div>
             </div>
 
             <div>

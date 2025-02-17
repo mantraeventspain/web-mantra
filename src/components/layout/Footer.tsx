@@ -1,7 +1,7 @@
 import { Facebook, Instagram, Users, ArrowUp } from "lucide-react";
 import { useSiteConfig } from "../../hooks/useSiteConfig";
 import { NewsletterForm } from "../newsletter/NewsletterForm";
-import { SiBeatport } from "react-icons/si";
+import { SiBeatport, SiSpotify } from "react-icons/si";
 import { FaSoundcloud } from "react-icons/fa";
 export const Footer = () => {
   const { config } = useSiteConfig();
@@ -65,6 +65,15 @@ export const Footer = () => {
                 rel="noopener noreferrer"
               >
                 <SiBeatport />
+              </a>
+              <a
+                href={config.spotify_url}
+                className="text-gray-300 hover:text-mantra-gold transition-colors duration-200"
+                aria-label="Síguenos en Spotify"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <SiSpotify />
               </a>
             </div>
           </div>

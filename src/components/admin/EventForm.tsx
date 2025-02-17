@@ -293,7 +293,7 @@ export const EventForm = ({ event, onSuccess, onCancel }: EventFormProps) => {
                             }}
                             className="form-checkbox h-4 w-4 text-mantra-gold rounded border-mantra-gold/20 bg-black/30"
                           />
-                          Artista Principal
+                          Headliner
                         </label>
                       </div>
 

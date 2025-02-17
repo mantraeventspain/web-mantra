@@ -6,7 +6,9 @@ export interface Track {
   artistId: string;
   releaseDate: string | null;
   beatportUrl: string | null;
+  soundcloudUrl: string | null;
   filename: string;
+  filename_icon: string;
   isFeatured: boolean;
   artist: Pick<Artist, "nickname">;
   artworkUrl: string | null;
@@ -18,6 +20,7 @@ export interface TrackFormData {
   artistId: string;
   releaseDate: string | null;
   beatportUrl: string | null;
+  soundcloudUrl: string | null;
   isFeatured: boolean;
 }
 

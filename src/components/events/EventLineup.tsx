@@ -99,7 +99,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
 
               <div className="relative bg-gradient-to-br from-mantra-blue/60 to-mantra-blue/40 rounded-xl p-8 backdrop-blur-lg border border-mantra-gold/20 transform hover:scale-[1.02] transition-all duration-300 shadow-xl">
                 <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-mantra-gold px-4 sm:px-6 py-2 rounded-full text-black text-xs sm:text-sm font-bold tracking-wider uppercase whitespace-nowrap">
-                  Artista Principal
+                  Headliner
                 </span>
                 <div className="flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-12">
                   <div className="relative w-48 h-48 group">

@@ -37,6 +37,7 @@ export function useFeaturedTrack() {
           isFeatured: trackData.is_featured,
           artist: trackData.artists,
           artworkUrl: trackData.filename_icon,
+          soundcloudUrl: trackData.soundcloud_url,
         };
 
         setTrack(track as Track);

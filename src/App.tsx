@@ -10,6 +10,7 @@ import { Header } from "./components/layout/Header";
 import { Footer } from "./components/layout/Footer";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
+import { AudioProvider } from "./contexts/AudioContext";
 
 const Admin = lazy(() => import("./pages/Admin"));
 
@@ -48,7 +49,11 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <AudioProvider>
+      <RouterProvider router={router} />
+    </AudioProvider>
+  );
 }
 
 export default App;

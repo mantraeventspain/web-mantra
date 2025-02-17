@@ -84,7 +84,7 @@ const NewsletterManager = () => {
 
     try {
       setIsLoading(true);
-      const batchSize = 50; // Enviar en lotes de 50 emails
+      const batchSize = 2; // Enviar en lotes de 50 emails
       const emails = subscribers.map((sub) => sub.email);
       const batches = [];
 
@@ -112,7 +112,7 @@ const NewsletterManager = () => {
         if (!response.ok) throw new Error("Error al enviar la newsletter");
 
         // Esperar un breve momento entre lotes para evitar sobrecarga
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1500));
       }
 
       alert("Newsletter enviada correctamente");

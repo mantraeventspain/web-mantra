@@ -283,6 +283,7 @@ export type Database = {
           id: string
           is_featured: boolean
           release_date: string | null
+          soundcloud_url: string | null
           title: string
           updated_at: string | null
         }
@@ -295,6 +296,7 @@ export type Database = {
           id?: string
           is_featured?: boolean
           release_date?: string | null
+          soundcloud_url?: string | null
           title: string
           updated_at?: string | null
         }
@@ -307,6 +309,7 @@ export type Database = {
           id?: string
           is_featured?: boolean
           release_date?: string | null
+          soundcloud_url?: string | null
           title?: string
           updated_at?: string | null
         }

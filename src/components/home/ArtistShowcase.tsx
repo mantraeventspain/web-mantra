@@ -11,6 +11,7 @@ import "react-lazy-load-image-component/src/effects/blur.css";
 const ArtistShowcase = () => {
   const { artists, isLoading, error } = useArtists();
   const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   if (isLoading) {
     return (
@@ -50,13 +51,24 @@ const ArtistShowcase = () => {
                 <div className="relative aspect-square mb-4">
                   <div className="absolute inset-0 rounded-xl overflow-hidden hover:scale-95 transition-transform duration-300">
                     {artist.avatarUrl ? (
-                      <LazyLoadImage
-                        src={artist.avatarUrl}
-                        alt={artist.nickname}
-                        className="w-full h-full object-cover"
-                        effect="blur"
-                        threshold={100}
-                      />
+                      isSafari ? (
+                        <img
+                          src={artist.avatarUrl}
+                          alt={artist.nickname}
+                          className="w-full h-full object-cover"
+                          draggable="false"
+                        />
+                      ) : (
+                        <LazyLoadImage
+                          src={artist.avatarUrl}
+                          alt={artist.nickname}
+                          className="w-full h-full object-cover"
+                          effect="blur"
+                          threshold={100}
+                          loading="lazy"
+                          draggable="false"
+                        />
+                      )
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-mantra-blue">
                         <span className="text-4xl text-mantra-gold">

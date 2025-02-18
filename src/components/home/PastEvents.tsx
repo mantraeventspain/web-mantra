@@ -24,6 +24,7 @@ const PastEvents = () => {
     string | null
   >(null);
   const [loadingGalleryId, setLoadingGalleryId] = useState<string | null>(null);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   const {
     images: galleryImages,
@@ -213,18 +214,21 @@ const PastEvents = () => {
 
               {/* Contenido scrolleable con estilo personalizado */}
               <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                {isLoadingGallery ? (
-                  <div className="flex justify-center items-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-mantra-gold"></div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {galleryImages.map((image, index) => (
-                      <div
-                        key={`${image.originalPath}-${index}`}
-                        className="relative group aspect-square"
-                        onContextMenu={(e) => e.preventDefault()}
-                      >
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {galleryImages.map((image, index) => (
+                    <div
+                      key={`${image.originalPath}-${index}`}
+                      className="relative group aspect-square"
+                      onContextMenu={(e) => e.preventDefault()}
+                    >
+                      {isSafari ? (
+                        <img
+                          src={image.thumbnail || "/placeholder.jpg"}
+                          alt="Evento"
+                          className="w-full h-full object-cover rounded-lg"
+                          draggable="false"
+                        />
+                      ) : (
                         <LazyLoadImage
                           src={image.thumbnail || "/placeholder.jpg"}
                           alt="Evento"
@@ -234,15 +238,13 @@ const PastEvents = () => {
                           loading="lazy"
                           draggable="false"
                         />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                          <span className="text-white text-sm">
-                            Vista previa
-                          </span>
-                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                        <span className="text-white text-sm">Vista previa</span>
                       </div>
-                    ))}
-                  </div>
-                )}
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Footer fijo con botón de cargar más */}
@@ -254,6 +256,7 @@ const PastEvents = () => {
                       loadMore();
                     }}
                     className="w-full py-3 px-6 bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold rounded-lg transition-colors flex items-center justify-center gap-2"
+                    disabled={isLoadingGallery}
                   >
                     {isLoadingGallery ? (
                       <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-mantra-gold" />

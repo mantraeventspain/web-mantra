@@ -25,53 +25,33 @@ serve(async (req) => {
   }
 
   try {
-    const { path, size = "w256h256", original = false } = await req.json();
+    const {
+      path,
+      size = "w256h256",
+      page = 1,
+      perPage = 10,
+    } = await req.json();
 
-    const dbx = new Dropbox({
-      accessToken: Deno.env.get("DROPBOX_ACCESS_TOKEN"),
-    });
-
-    // Si se solicita la imagen original
-    if (original) {
-      try {
-        const response = await dbx.filesGetTemporaryLink({
-          path,
-        });
-
-        return new Response(JSON.stringify({ url: response.result.link }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      } catch (error) {
-        console.error("Error al obtener enlace temporal:", error);
-        throw new Error("No se pudo obtener el enlace temporal");
-      }
-    }
-
-    // Inicializar cliente de Supabase
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    // Obtener token actualizado
+    const tokenResponse = await fetch(
+      `${Deno.env.get("SUPABASE_URL")}/functions/v1/renew-dropbox-token`,
       {
-        auth: { persistSession: false },
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+        },
       }
     );
 
-    // Verificar caché
-    const cacheKey = `${path}-${size}`;
-    const { data: cachedData, error: cacheError } = await supabaseAdmin
-      .from("dropbox_cache")
-      .select("urls, updated_at")
-      .eq("path", cacheKey)
-      .single();
-
-    if (!cacheError && cachedData) {
-      const cacheAge = Date.now() - new Date(cachedData.updated_at).getTime();
-      if (cacheAge < 24 * 60 * 60 * 1000) {
-        return new Response(JSON.stringify(cachedData.urls), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
+    if (!tokenResponse.ok) {
+      throw new Error("Failed to get Dropbox token");
     }
+
+    const { access_token } = await tokenResponse.json();
+
+    const dbx = new Dropbox({
+      accessToken: access_token,
+    });
 
     // Obtener lista de archivos
     const response = await dbx.filesListFolder({ path });
@@ -84,45 +64,38 @@ serve(async (req) => {
       entry.name.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/)
     );
 
-    // Procesar en lotes
-    const allThumbnails = [];
-    for (let i = 0; i < imageEntries.length; i += BATCH_SIZE) {
-      const batch = imageEntries.slice(i, i + BATCH_SIZE);
+    // Calcular el índice inicial y final para la paginación
+    const startIndex = (page - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    const paginatedEntries = imageEntries.slice(startIndex, endIndex);
 
-      const thumbnailsResponse = await dbx.filesGetThumbnailBatch({
-        entries: batch.map((entry) => ({
-          path: entry.path_display || "",
-          format: "jpeg",
-          size,
-          mode: "strict",
-        })),
-      });
-
-      const batchThumbnails = thumbnailsResponse.result.entries.map(
-        (entry) => ({
-          thumbnail: entry.thumbnail
-            ? `data:image/jpeg;base64,${entry.thumbnail}`
-            : null,
-          originalPath: entry.metadata.path_display,
-        })
-      );
-
-      allThumbnails.push(...batchThumbnails);
-    }
-
-    // Actualizar caché
-    await supabaseAdmin.from("dropbox_cache").upsert(
-      {
-        path: cacheKey,
-        urls: allThumbnails,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "path" }
-    );
-
-    return new Response(JSON.stringify(allThumbnails), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    // Procesar el lote actual
+    const thumbnailsResponse = await dbx.filesGetThumbnailBatch({
+      entries: paginatedEntries.map((entry) => ({
+        path: entry.path_display || "",
+        format: "jpeg",
+        size,
+        mode: "strict",
+      })),
     });
+
+    const thumbnails = thumbnailsResponse.result.entries.map((entry) => ({
+      thumbnail: entry.thumbnail
+        ? `data:image/jpeg;base64,${entry.thumbnail}`
+        : null,
+      originalPath: entry.metadata.path_display,
+    }));
+
+    return new Response(
+      JSON.stringify({
+        images: thumbnails,
+        total: imageEntries.length,
+        hasMore: endIndex < imageEntries.length,
+      }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     console.error("Error en la Edge Function:", error);
     return new Response(

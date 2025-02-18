@@ -29,7 +29,9 @@ const TracksSection = () => {
       {/* Carrusel de Tracks - Modificado para mostrar tracks parcialmente */}
       {regularTracks.length > 0 && (
         <div className="mt-16">
-          <h3 className="text-xl text-mantra-gold mb-8 pl-4">Más Tracks</h3>
+          <h3 className="text-xl text-mantra-gold mb-8 pl-4 text-center">
+            Más Tracks
+          </h3>
           <ScrollableSection>
             <div className="flex gap-6 px-4 pb-4 pr-[20%]">
               {regularTracks.map((track) => (
@@ -299,9 +301,8 @@ const TrackCard = ({ track }: { track: Track }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="cursor-pointer flex-shrink-0 w-[280px]"
+      className="cursor-pointer flex-shrink-0 w-[200px] md:w-[250px]"
     >
-      {/* Siempre renderizamos el elemento audio */}
       <audio ref={audioRef} preload="none" />
 
       <div className="relative aspect-square mb-4">

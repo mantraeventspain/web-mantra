@@ -33,19 +33,21 @@ export function useEventGallery({
     try {
       setIsLoading(true);
       const path = `/MANTRA/${eventTitle}`;
-      const start = (pageNum - 1) * imagesPerPage;
-      const end = start + imagesPerPage;
 
-      const allImages = await getTemporaryLinks(path);
-      const pageImages = allImages.slice(start, end);
+      const response = await getTemporaryLinks(
+        path,
+        "w256h256",
+        pageNum,
+        imagesPerPage
+      );
 
       if (pageNum === 1) {
-        setImages(pageImages);
+        setImages(response.images);
       } else {
-        setImages((prev) => [...prev, ...pageImages]);
+        setImages((prev) => [...prev, ...response.images]);
       }
 
-      setHasMore(end < allImages.length);
+      setHasMore(response.hasMore);
     } catch (err) {
       setError(
         err instanceof Error ? err : new Error("Error al cargar imágenes")

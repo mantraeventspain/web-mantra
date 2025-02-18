@@ -14,8 +14,10 @@ async function wait(ms: number) {
 
 export async function getTemporaryLinks(
   path: string,
-  size: string = "w256h256"
-): Promise<ImageUrl[]> {
+  size: string = "w256h256",
+  page: number = 1,
+  perPage: number = 10
+): Promise<{ images: ImageUrl[]; hasMore: boolean; total: number }> {
   let retries = 0;
 
   while (retries < MAX_RETRIES) {
@@ -33,7 +35,7 @@ export async function getTemporaryLinks(
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
           },
-          body: JSON.stringify({ path, size }),
+          body: JSON.stringify({ path, size, page, perPage }),
         }
       );
 
@@ -41,18 +43,23 @@ export async function getTemporaryLinks(
         throw new Error("Error al obtener las imágenes");
       }
 
-      return await response.json();
+      const data = await response.json();
+      return {
+        images: data.images || [],
+        hasMore: data.hasMore || false,
+        total: data.total || 0,
+      };
     } catch (error) {
       retries++;
       if (retries === MAX_RETRIES) {
         console.error("Error al obtener enlaces temporales:", error);
-        return [];
+        return { images: [], hasMore: false, total: 0 };
       }
       await wait(RETRY_DELAY * retries);
     }
   }
 
-  return [];
+  return { images: [], hasMore: false, total: 0 };
 }
 
 export async function getOriginalImage(path: string): Promise<string | null> {

@@ -14,43 +14,37 @@ import { EventLineup } from "../events/EventLineup";
 import { ScrollableSection } from "../ui/ScrollableSection";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import { getTemporaryLinks } from "../../services/dropboxService";
-import { ImageUrl } from "../../types/image";
 
 const PastEvents = () => {
   const { events, isLoading: eventsLoading, error } = usePastEvents();
-  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
-  const [selectedEventTitle, setSelectedEventTitle] = useState<string | null>(
-    null
-  );
-  const [galleryImages, setGalleryImages] = useState<ImageUrl[]>([]);
-  const [isLoadingGallery, setIsLoadingGallery] = useState(false);
+  const [selectedLineupEventId, setSelectedLineupEventId] = useState<
+    string | null
+  >(null);
+  const [selectedGalleryEventTitle, setSelectedGalleryEventTitle] = useState<
+    string | null
+  >(null);
+  const [loadingGalleryId, setLoadingGalleryId] = useState<string | null>(null);
 
   const {
-    isLoading: galleryLoading,
+    images: galleryImages,
+    isLoading: isLoadingGallery,
     hasMore,
     loadMore,
   } = useEventGallery({
-    eventTitle: selectedEventTitle || "",
+    eventTitle: selectedGalleryEventTitle || "",
     imagesPerPage: 10,
   });
 
-  const handleGalleryOpen = async (event: { title: string }) => {
-    setIsLoadingGallery(true);
-    try {
-      const path = `/MANTRA/${event.title}`;
-      const images = await getTemporaryLinks(path);
-      setGalleryImages(images);
-      setSelectedEventTitle(event.title);
-    } catch (error) {
-      console.error("Error loading gallery:", error);
-    } finally {
-      setIsLoadingGallery(false);
-    }
+  const handleGalleryOpen = async (event: { title: string; id: string }) => {
+    if (isLoadingGallery) return; // Prevenir apertura mientras carga
+
+    setLoadingGalleryId(event.id);
+    setSelectedGalleryEventTitle(event.title);
+    setLoadingGalleryId(null);
   };
 
   const handleLineupOpen = (eventId: string) => {
-    setSelectedEvent(eventId);
+    setSelectedLineupEventId(eventId);
 
     setTimeout(() => {
       const modalElement = document.querySelector('[role="dialog"]');
@@ -99,11 +93,31 @@ const PastEvents = () => {
                 <LazyLoadImage
                   src={event.imageUrl || "/default-event.jpg"}
                   alt={event.title}
-                  className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover transform transition-transform duration-500"
+                  style={{
+                    transform: "scale(1)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "scale(1.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "scale(1)";
+                  }}
                   effect="blur"
                   threshold={100}
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors" />
+                <div
+                  className="absolute inset-0 bg-black transition-colors duration-300"
+                  style={{
+                    opacity: 0,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = "0.5";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = "0";
+                  }}
+                />
               </div>
 
               {/* Contenido del evento */}
@@ -142,10 +156,23 @@ const PastEvents = () => {
 
                     <button
                       onClick={() => handleGalleryOpen(event)}
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold cursor-pointer`}
+                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold ${
+                        loadingGalleryId === event.id || isLoadingGallery
+                          ? "cursor-wait"
+                          : "cursor-pointer"
+                      }`}
+                      disabled={
+                        loadingGalleryId === event.id || isLoadingGallery
+                      }
                     >
-                      <ImageIcon className="w-5 h-5" />
-                      Galería
+                      {loadingGalleryId === event.id || isLoadingGallery ? (
+                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-mantra-gold" />
+                      ) : (
+                        <>
+                          <ImageIcon className="w-5 h-5" />
+                          Galería
+                        </>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -157,7 +184,7 @@ const PastEvents = () => {
 
       {/* Modal de Galería */}
       <AnimatePresence>
-        {selectedEventTitle && (
+        {selectedGalleryEventTitle && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -165,15 +192,10 @@ const PastEvents = () => {
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
             {/* Fondo con gradiente */}
-            <div className="absolute inset-0 bg-black/90 backdrop-blur-sm">
-              <div className="absolute inset-0 bg-gradient-radial from-mantra-gold/20 via-black/95 to-black">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,166,87,0.15),rgba(15,26,36,0.95)_50%,rgba(0,0,0,1)_100%)]" />
-              </div>
-            </div>
 
             {/* Contenido del modal */}
             <div
-              className="relative max-w-7xl w-full bg-mantra-blue/30 rounded-xl backdrop-blur-sm flex flex-col max-h-[90vh] border border-mantra-gold/10"
+              className="relative max-w-7xl w-full bg-gradient-to-b from-mantra-warmBlack to-black rounded-xl shadow-2xl flex flex-col max-h-[90vh]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header fijo */}
@@ -182,7 +204,7 @@ const PastEvents = () => {
                   Galería de Fotos
                 </h3>
                 <button
-                  onClick={() => setSelectedEventTitle(null)}
+                  onClick={() => setSelectedGalleryEventTitle(null)}
                   className="text-white/70 hover:text-mantra-gold transition-colors"
                 >
                   <X className="w-6 h-6" />
@@ -233,7 +255,7 @@ const PastEvents = () => {
                     }}
                     className="w-full py-3 px-6 bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold rounded-lg transition-colors flex items-center justify-center gap-2"
                   >
-                    {galleryLoading ? (
+                    {isLoadingGallery ? (
                       <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-mantra-gold" />
                     ) : (
                       <>
@@ -251,13 +273,13 @@ const PastEvents = () => {
 
       {/* Modal de Line-up */}
       <AnimatePresence>
-        {selectedEvent && (
+        {selectedLineupEventId && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] bg-black flex items-center justify-center p-4"
-            onClick={() => setSelectedEvent(null)}
+            onClick={() => setSelectedLineupEventId(null)}
             role="dialog"
             aria-modal="true"
           >
@@ -274,7 +296,7 @@ const PastEvents = () => {
                   Line-up del Evento
                 </h3>
                 <button
-                  onClick={() => setSelectedEvent(null)}
+                  onClick={() => setSelectedLineupEventId(null)}
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   <X className="w-6 h-6" />
@@ -283,7 +305,7 @@ const PastEvents = () => {
 
               {/* Contenido scrolleable */}
               <div className="flex-1 overflow-y-auto p-6">
-                <EventLineup eventId={selectedEvent} />
+                <EventLineup eventId={selectedLineupEventId} />
               </div>
             </motion.div>
           </motion.div>

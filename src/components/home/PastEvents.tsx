@@ -12,8 +12,6 @@ import { useEventGallery } from "../../hooks/useEventGallery";
 import { SectionTitle } from "../ui/SectionTitle";
 import { EventLineup } from "../events/EventLineup";
 import { ScrollableSection } from "../ui/ScrollableSection";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import "react-lazy-load-image-component/src/effects/blur.css";
 
 const PastEvents = () => {
   const { events, isLoading: eventsLoading, error } = usePastEvents();
@@ -91,7 +89,7 @@ const PastEvents = () => {
             >
               {/* Imagen principal del evento */}
               <div className="aspect-video relative overflow-hidden">
-                <LazyLoadImage
+                <img
                   src={event.imageUrl || "/default-event.jpg"}
                   alt={event.title}
                   className="w-full h-full object-cover transform transition-transform duration-500"
@@ -104,8 +102,6 @@ const PastEvents = () => {
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = "scale(1)";
                   }}
-                  effect="blur"
-                  threshold={100}
                 />
                 <div
                   className="absolute inset-0 bg-black transition-colors duration-300"
@@ -229,13 +225,10 @@ const PastEvents = () => {
                           draggable="false"
                         />
                       ) : (
-                        <LazyLoadImage
+                        <img
                           src={image.thumbnail || "/placeholder.jpg"}
                           alt="Evento"
                           className="w-full h-full object-cover rounded-lg"
-                          effect="blur"
-                          threshold={100}
-                          loading="lazy"
                           draggable="false"
                         />
                       )}

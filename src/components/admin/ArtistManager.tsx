@@ -5,8 +5,6 @@ import { ArtistForm } from "./ArtistForm";
 import { Artist } from "../../types/artist";
 import { Edit, UserPlus, UserX, UserCheck } from "lucide-react";
 import { ArtistOrderManager } from "./ArtistOrderManager";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import "react-lazy-load-image-component/src/effects/blur.css";
 
 const ArtistManager = () => {
   const [activeTab, setActiveTab] = useState<"list" | "order">("list");
@@ -138,7 +136,7 @@ const ArtistManager = () => {
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full overflow-hidden bg-mantra-blue flex-shrink-0">
                         {artist.avatarUrl ? (
-                          <LazyLoadImage
+                          <img
                             src={artist.avatarUrl}
                             alt={artist.nickname}
                             className="w-full h-full object-cover"

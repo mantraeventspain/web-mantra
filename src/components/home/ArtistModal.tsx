@@ -1,8 +1,6 @@
 import { Instagram, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Artist } from "../../types/artist";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import "react-lazy-load-image-component/src/effects/blur.css";
 import { SiBeatport } from "react-icons/si";
 import { FaSoundcloud } from "react-icons/fa";
 interface ArtistModalProps {
@@ -44,12 +42,10 @@ export const ArtistModal = ({ artist, onClose }: ArtistModalProps) => {
                 <div className="flex flex-col md:flex-row items-start md:items-end gap-6">
                   <div className="w-48 h-48 rounded-full overflow-hidden bg-mantra-blue flex-shrink-0 shadow-2xl">
                     {artist.avatarUrl ? (
-                      <LazyLoadImage
+                      <img
                         src={artist.avatarUrl}
                         alt={artist.nickname}
                         className="w-full h-full object-cover"
-                        effect="blur"
-                        threshold={100}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center bg-mantra-blue">

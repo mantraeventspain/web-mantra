@@ -1,8 +1,6 @@
 import { FaSoundcloud } from "react-icons/fa";
 import { useEventLineupById } from "../../hooks/useEventLineupById";
 import { SectionTitle } from "../ui/SectionTitle";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import "react-lazy-load-image-component/src/effects/blur.css";
 import { Instagram } from "lucide-react";
 import { SiBeatport } from "react-icons/si";
 
@@ -104,7 +102,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
                 <div className="flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-12">
                   <div className="relative w-48 h-48 group">
                     {headliner.avatarUrl ? (
-                      <LazyLoadImage
+                      <img
                         src={headliner.avatarUrl}
                         alt={headliner.nickname}
                         className="w-full h-full object-cover rounded-full ring-4 ring-mantra-gold/50 group-hover:ring-mantra-gold transition-all duration-300"
@@ -185,7 +183,7 @@ export const EventLineup = ({ eventId }: EventLineupProps) => {
               <div className="flex flex-col items-center space-y-4">
                 <div className="relative w-32 h-32">
                   {artist.avatarUrl ? (
-                    <LazyLoadImage
+                    <img
                       src={artist.avatarUrl}
                       alt={artist.nickname}
                       className="w-full h-full object-cover rounded-full ring-2 ring-mantra-gold/30 group-hover:ring-mantra-gold/50 transition-all duration-300"

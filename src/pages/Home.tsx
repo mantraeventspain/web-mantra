@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { AnimatedSection } from "../components/home/AnimatedSection";
 import { EventLineup } from "../components/events/EventLineup";
-// import { usePublicUrl } from "../hooks/useSupabase";
+import { usePublicUrl } from "../hooks/useSupabase";
 import { FloatingTicketButton } from "../components/layout/FloatingTicketButton";
 import ArtistShowcase from "../components/home/ArtistShowcase";
 
@@ -17,17 +17,17 @@ const LoadingSection = () => (
 );
 
 export const Home = () => {
-  // const { url: videoUrl, isLoading } = usePublicUrl(
-  //   "media",
-  //   "videos/intro.mp4"
-  // );
+  const { url: videoUrl, isLoading } = usePublicUrl(
+    "media",
+    "videos/intro.mp4"
+  );
 
   return (
     <div className="relative min-h-screen">
       {/* Video section sin gradientes */}
       <div className="relative min-h-screen">
-        {/* Version anterior con video desde Supabase */}
-        {/* <div className="absolute inset-0 w-full h-screen">
+        {/* Contenedor del video */}
+        <div className="absolute inset-0 w-full h-screen">
           <video
             autoPlay
             muted
@@ -39,20 +39,6 @@ export const Home = () => {
             {!isLoading && videoUrl && (
               <source src={videoUrl} type="video/mp4" />
             )}
-          </video>
-        </div> */}
-
-        {/* Nueva versión con video local */}
-        <div className="absolute inset-0 w-full h-screen">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="object-cover w-full h-full"
-            poster="https://images.unsplash.com/photo-1571266028243-3716f02d2d2e?auto=format&fit=crop&q=80"
-          >
-            <source src="/videoMantra.mp4" type="video/mp4" />
           </video>
         </div>
       </div>

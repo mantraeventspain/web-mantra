@@ -7,8 +7,6 @@ import { SectionTitle } from "../ui/SectionTitle";
 import { ScrollableSection } from "../ui/ScrollableSection";
 import { useFeaturedTrack } from "../../hooks/useFeaturedTrack";
 import type { Track } from "../../types/track";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import "react-lazy-load-image-component/src/effects/blur.css";
 import { supabase } from "../../lib/supabase";
 import { SiBeatport } from "react-icons/si";
 import { FaSoundcloud } from "react-icons/fa";
@@ -140,12 +138,10 @@ const FeaturedTrack = ({ track }: { track: Track }) => {
       <div className="flex flex-col md:flex-row gap-8 items-center">
         {/* Artwork y controles */}
         <div className="relative group w-64 h-64 flex-shrink-0">
-          <LazyLoadImage
+          <img
             src={artworkUrl || "/default-artwork.jpg"}
             alt={track.title}
             className="w-full h-full object-cover rounded-lg shadow-xl"
-            effect="blur"
-            threshold={100}
           />
           <button
             onClick={togglePlayPause}
@@ -307,12 +303,10 @@ const TrackCard = ({ track }: { track: Track }) => {
 
       <div className="relative aspect-square mb-4">
         <div className="absolute inset-0 rounded-xl overflow-hidden hover:scale-95 transition-transform duration-300">
-          <LazyLoadImage
+          <img
             src={track.artworkUrl || "/default-artwork.jpg"}
             alt={track.title}
             className="w-full h-full object-cover"
-            effect="blur"
-            threshold={100}
           />
           <div
             className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"

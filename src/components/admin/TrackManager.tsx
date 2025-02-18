@@ -5,8 +5,6 @@ import { TrackForm } from "./TrackForm";
 import type { Track } from "../../types/track";
 import { supabase } from "../../lib/supabase";
 import { deleteTrack } from "../../hooks/useTrackForm";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import "react-lazy-load-image-component/src/effects/blur.css";
 
 const TrackManager = () => {
   const { tracks, isLoading, error, refetch } = useTracks();
@@ -93,12 +91,10 @@ const TrackManager = () => {
               <div className="flex gap-4">
                 <div className="w-20 h-20 rounded-lg overflow-hidden bg-black/30 flex-shrink-0">
                   {track.artworkUrl ? (
-                    <LazyLoadImage
+                    <img
                       src={track.artworkUrl}
                       alt={track.title}
                       className="w-full h-full object-cover"
-                      effect="blur"
-                      threshold={100}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">

@@ -13,6 +13,13 @@ import { SectionTitle } from "../ui/SectionTitle";
 import { EventLineup } from "../events/EventLineup";
 import { ScrollableSection } from "../ui/ScrollableSection";
 
+const scrollbarStyle = `
+  scrollbar-thin
+  scrollbar-thumb-white/10
+  scrollbar-track-transparent
+  hover:scrollbar-thumb-white/20
+`;
+
 const PastEvents = () => {
   const { events, isLoading: eventsLoading, error } = usePastEvents();
   const [selectedLineupEventId, setSelectedLineupEventId] = useState<
@@ -300,7 +307,7 @@ const PastEvents = () => {
               </div>
 
               {/* Contenido scrolleable */}
-              <div className="flex-1 overflow-y-auto p-6">
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                 <EventLineup eventId={selectedLineupEventId} />
               </div>
             </motion.div>

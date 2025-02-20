@@ -2,17 +2,40 @@ import { useState } from "react";
 import { useEvents } from "../../hooks/useEvents";
 import { EventForm } from "./EventForm";
 import { Event } from "../../types";
-import { Edit, Plus, Calendar } from "lucide-react";
+import { Edit, Plus, Calendar, Trash2 } from "lucide-react";
+import { deleteEvent } from "../../utils/eventHelpers";
 
 const EventManager = () => {
   const { events, isLoading, error, refetch } = useEvents();
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleFormSuccess = async () => {
     setShowForm(false);
     setSelectedEvent(null);
     await refetch();
+  };
+
+  const handleDeleteEvent = async (event: Event) => {
+    if (isDeleting) return;
+
+    const confirmed = window.confirm(
+      `¿Estás seguro de que deseas eliminar el evento "${event.title}"? Esta acción eliminará también el lineup y no se puede deshacer.`
+    );
+
+    if (!confirmed) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteEvent(event.id);
+      await refetch();
+    } catch (error) {
+      console.error("Error al eliminar el evento:", error);
+      alert("Error al eliminar el evento");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   if (isLoading) {
@@ -77,16 +100,26 @@ const EventManager = () => {
                 <div>
                   <p className="text-gray-300">{event.location}</p>
                 </div>
-                <button
-                  onClick={() => {
-                    setSelectedEvent(event);
-                    setShowForm(true);
-                  }}
-                  className="p-2 text-gray-400 hover:text-white transition-colors"
-                  title="Editar"
-                >
-                  <Edit className="w-5 h-5" />
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setSelectedEvent(event);
+                      setShowForm(true);
+                    }}
+                    className="p-2 text-gray-400 hover:text-white transition-colors"
+                    title="Editar"
+                  >
+                    <Edit className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteEvent(event)}
+                    className="p-2 text-red-400 hover:text-red-300 transition-colors"
+                    title="Eliminar"
+                    disabled={isDeleting}
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

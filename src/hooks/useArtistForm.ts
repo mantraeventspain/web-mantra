@@ -98,23 +98,39 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
     setStatus({ isLoading: true, success: {}, error: null });
 
     try {
+      // Trim all string values in formData
+      const trimmedFormData = {
+        ...formData,
+        nickname: formData.nickname.trim(),
+        firstName: formData.firstName.trim(),
+        lastName1: formData.lastName1.trim(),
+        lastName2: formData.lastName2.trim(),
+        description: formData.description.trim(),
+        instagram_username: formData.instagram_username.trim(),
+        soundcloud_url: formData.soundcloud_url.trim(),
+        beatport_url: formData.beatport_url.trim(),
+        role: formData.role.trim(),
+      };
+
       // Validaciones
-      if (!formData.nickname.match(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9_\s-]+$/)) {
+      if (!trimmedFormData.nickname.match(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9_\s-]+$/)) {
         throw new Error(
           "El nickname solo puede contener letras, números, guiones, guiones bajos y espacios"
         );
       }
 
       if (
-        formData.soundcloud_url &&
-        !formData.soundcloud_url.match(/^https:\/\/soundcloud\.com\/.+$/)
+        trimmedFormData.soundcloud_url &&
+        !trimmedFormData.soundcloud_url.match(/^https:\/\/soundcloud\.com\/.+$/)
       ) {
         throw new Error("URL de SoundCloud inválida");
       }
 
       if (
-        formData.beatport_url &&
-        !formData.beatport_url.match(/^https:\/\/www\.beatport\.com\/.+$/)
+        trimmedFormData.beatport_url &&
+        !trimmedFormData.beatport_url.match(
+          /^https:\/\/www\.beatport\.com\/.+$/
+        )
       ) {
         throw new Error("URL de Beatport inválida");
       }
@@ -123,19 +139,21 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
 
       if (artist?.id) {
         // Modo actualización
-        const formFields = Object.keys(formData) as (keyof typeof formData)[];
+        const formFields = Object.keys(
+          trimmedFormData
+        ) as (keyof typeof trimmedFormData)[];
         const changedFields = formFields.reduce((acc, key) => {
-          const currentValue = normalizeValue(formData[key]);
+          const currentValue = normalizeValue(trimmedFormData[key]);
           const originalValue = normalizeValue(
             artist[key as keyof typeof artist]
           );
 
           // Incluimos el campo si ha cambiado o si es una cadena vacía (para permitir establecer null)
-          if (currentValue !== originalValue || formData[key] === "") {
-            acc[key as keyof typeof formData] = formData[key];
+          if (currentValue !== originalValue || trimmedFormData[key] === "") {
+            acc[key as keyof typeof trimmedFormData] = trimmedFormData[key];
           }
           return acc;
-        }, {} as Record<keyof typeof formData, string>);
+        }, {} as Record<keyof typeof trimmedFormData, string>);
 
         const dataToUpdate = normalizeKeys(changedFields);
 
@@ -148,11 +166,11 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
         dataSuccess = true;
       } else {
         // Modo creación
-        const normalizedData = normalizeKeys(formData);
+        const normalizedData = normalizeKeys(trimmedFormData);
         const dataToInsert = {
           ...normalizedData,
           is_active: true,
-          nickname: formData.nickname,
+          nickname: trimmedFormData.nickname,
         } as Database["public"]["Tables"]["artists"]["Insert"];
 
         const { error: dbError } = await supabase
@@ -168,7 +186,7 @@ export function useArtistForm(artist?: Artist, onSuccess?: () => void) {
       if (avatarFile) {
         await uploadArtistAvatar(
           avatarFile,
-          normalizeNickname(formData.nickname)
+          normalizeNickname(trimmedFormData.nickname)
         );
         avatarSuccess = true;
       }

@@ -5,16 +5,26 @@ import type { Artist } from "../types/artist";
 
 export function useArtists({
   includeInactive = false,
-}: { includeInactive?: boolean } = {}) {
+  orderBy = "nickname",
+}: {
+  includeInactive?: boolean;
+  orderBy?: "nickname" | "display_order";
+} = {}) {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchArtists = useCallback(
-    async ({ includeInactive = false }: { includeInactive?: boolean } = {}) => {
+    async ({
+      includeInactive = false,
+      orderBy = "nickname",
+    }: {
+      includeInactive?: boolean;
+      orderBy?: "nickname" | "display_order";
+    } = {}) => {
       try {
         setIsLoading(true);
-        let query = supabase.from("artists").select("*").order("display_order");
+        let query = supabase.from("artists").select("*").order(orderBy);
 
         if (!includeInactive) {
           query = query.eq("is_active", true);
@@ -56,8 +66,8 @@ export function useArtists({
   );
 
   useEffect(() => {
-    fetchArtists({ includeInactive });
-  }, [fetchArtists, includeInactive]);
+    fetchArtists({ includeInactive, orderBy });
+  }, [fetchArtists, includeInactive, orderBy]);
 
   return { artists, isLoading, error, refetch: fetchArtists };
 }

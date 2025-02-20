@@ -23,7 +23,10 @@ const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export const TrackForm = ({ track, onSuccess, onCancel }: TrackFormProps) => {
   const formRef = useRef<HTMLFormElement>(null);
-  const { artists } = useArtists({ includeInactive: false });
+  const { artists } = useArtists({
+    includeInactive: false,
+    orderBy: "nickname",
+  });
   const { formData, setFormData, setFiles, status, handleSubmit } =
     useTrackForm(track, onSuccess);
 

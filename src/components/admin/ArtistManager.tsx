@@ -3,14 +3,19 @@ import { supabase } from "../../lib/supabase";
 import { useArtists } from "../../hooks/useArtists";
 import { ArtistForm } from "./ArtistForm";
 import { Artist } from "../../types/artist";
-import { Edit, UserPlus, UserX, UserCheck } from "lucide-react";
+import { Edit, UserPlus, UserX, UserCheck, Trash2 } from "lucide-react";
 import { ArtistOrderManager } from "./ArtistOrderManager";
+import {
+  deleteArtistFiles,
+  checkArtistReferences,
+} from "../../utils/artistHelpers";
 
 const ArtistManager = () => {
   const [activeTab, setActiveTab] = useState<"list" | "order">("list");
   const [showInactive, setShowInactive] = useState(false);
   const { artists, isLoading, error, refetch } = useArtists({
     includeInactive: showInactive,
+    orderBy: "display_order",
   });
   const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -36,6 +41,41 @@ const ArtistManager = () => {
     } catch (e) {
       console.error("Error al cambiar el estado del artista:", e);
       alert("Error al cambiar el estado del artista");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteArtist = async (artist: Artist) => {
+    setIsDeleting(true);
+    try {
+      // Primero verificamos si el artista tiene referencias
+      const references = await checkArtistReferences(artist.id);
+
+      if (!references.canDelete) {
+        alert(references.message);
+        return;
+      }
+
+      // Si no hay referencias, procedemos con la confirmación
+      const message = `¿Estás seguro de que deseas eliminar permanentemente a ${artist.nickname}? Esta acción no se puede deshacer y eliminará todos sus archivos asociados.`;
+
+      if (!window.confirm(message)) return;
+
+      // Eliminamos los archivos del storage
+      await deleteArtistFiles(artist.normalized_nickname);
+
+      // Eliminamos el registro de la base de datos
+      const { error } = await supabase
+        .from("artists")
+        .delete()
+        .eq("id", artist.id);
+
+      if (error) throw error;
+      await refetch();
+    } catch (e) {
+      console.error("Error al eliminar el artista:", e);
+      alert("Error al eliminar el artista");
     } finally {
       setIsDeleting(false);
     }
@@ -113,7 +153,10 @@ const ArtistManager = () => {
       </div>
 
       {activeTab === "list" ? (
-        <div className="overflow-x-auto">
+        <div
+          className="overflow-x-auto custom-scrollbar overflow-y-auto"
+          style={{ maxHeight: "calc(10 * 76px + 45px)" }}
+        >
           <table className="w-full">
             <thead>
               <tr className="text-left border-b border-mantra-gold/20">
@@ -220,6 +263,14 @@ const ArtistManager = () => {
                         ) : (
                           <UserCheck className="w-5 h-5" />
                         )}
+                      </button>
+                      <button
+                        onClick={() => handleDeleteArtist(artist)}
+                        disabled={isDeleting}
+                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                        title="Eliminar artista"
+                      >
+                        <Trash2 className="w-5 h-5" />
                       </button>
                     </div>
                   </td>

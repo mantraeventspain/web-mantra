@@ -61,3 +61,61 @@ export async function uploadEventImage(
     return null;
   }
 }
+
+async function deleteEventFiles(eventId: string) {
+  try {
+    // List all files in the event directory
+    const { data: files, error: listError } = await supabase.storage
+      .from("media")
+      .list(`images/events/${eventId}`);
+
+    if (listError) throw listError;
+
+    if (files && files.length > 0) {
+      // Create array with complete file paths
+      const filePaths = files.map(
+        (file) => `images/events/${eventId}/${file.name}`
+      );
+
+      // Delete all files
+      const { error: deleteError } = await supabase.storage
+        .from("media")
+        .remove(filePaths);
+
+      if (deleteError) throw deleteError;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting event files:", error);
+    throw error;
+  }
+}
+
+export async function deleteEvent(eventId: string) {
+  try {
+    // Delete lineup first (foreign key constraint)
+    const { error: lineupError } = await supabase
+      .from("event_artists")
+      .delete()
+      .eq("event_id", eventId);
+
+    if (lineupError) throw lineupError;
+
+    // Delete event files
+    await deleteEventFiles(eventId);
+
+    // Delete event record
+    const { error: eventError } = await supabase
+      .from("events")
+      .delete()
+      .eq("id", eventId);
+
+    if (eventError) throw eventError;
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting event:", error);
+    throw error;
+  }
+}

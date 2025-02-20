@@ -97,8 +97,20 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
     setStatus({ isLoading: true, success: {}, error: null });
 
     try {
+      // Trim all string values in formData
+      const trimmedFormData = {
+        ...formData,
+        title: formData.title.trim(),
+        description: formData.description?.trim() || null,
+        location: formData.location.trim(),
+      };
+
       // Validaciones básicas
-      if (!formData.title || !formData.date || !formData.location) {
+      if (
+        !trimmedFormData.title ||
+        !trimmedFormData.date ||
+        !trimmedFormData.location
+      ) {
         throw new Error("Por favor completa todos los campos requeridos");
       }
 
@@ -110,10 +122,10 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
         const { error: dbError } = await supabase
           .from("events")
           .update({
-            title: formData.title,
-            description: formData.description,
-            date: formData.date,
-            location: formData.location,
+            title: trimmedFormData.title,
+            description: trimmedFormData.description,
+            date: trimmedFormData.date,
+            location: trimmedFormData.location,
           })
           .eq("id", event.id);
 
@@ -123,10 +135,10 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
         const { data: newEvent, error: dbError } = await supabase
           .from("events")
           .insert({
-            title: formData.title,
-            description: formData.description,
-            date: formData.date,
-            location: formData.location,
+            title: trimmedFormData.title,
+            description: trimmedFormData.description,
+            date: trimmedFormData.date,
+            location: trimmedFormData.location,
           })
           .select()
           .single();
@@ -165,7 +177,7 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
         try {
           const imagePath = await uploadEventImage(
             imageFile,
-            formData.title,
+            trimmedFormData.title,
             eventId
           );
 

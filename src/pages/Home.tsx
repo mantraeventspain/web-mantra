@@ -3,10 +3,11 @@ import { AnimatedSection } from "../components/home/AnimatedSection";
 import { EventLineup } from "../components/events/EventLineup";
 import { usePublicUrl } from "../hooks/useSupabase";
 import { FloatingTicketButton } from "../components/layout/FloatingTicketButton";
-import ArtistShowcase from "../components/home/ArtistShowcase";
 
 // Lazy load components
+
 const PastEvents = lazy(() => import("../components/home/PastEvents"));
+const ArtistShowcase = lazy(() => import("../components/home/ArtistShowcase"));
 const TracksSection = lazy(() => import("../components/home/FeaturedTrack"));
 
 // Loading component

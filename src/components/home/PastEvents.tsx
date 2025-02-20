@@ -12,13 +12,7 @@ import { useEventGallery } from "../../hooks/useEventGallery";
 import { SectionTitle } from "../ui/SectionTitle";
 import { EventLineup } from "../events/EventLineup";
 import { ScrollableSection } from "../ui/ScrollableSection";
-
-const scrollbarStyle = `
-  scrollbar-thin
-  scrollbar-thumb-white/10
-  scrollbar-track-transparent
-  hover:scrollbar-thumb-white/20
-`;
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const PastEvents = () => {
   const { events, isLoading: eventsLoading, error } = usePastEvents();
@@ -29,7 +23,6 @@ const PastEvents = () => {
     string | null
   >(null);
   const [loadingGalleryId, setLoadingGalleryId] = useState<string | null>(null);
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
   const {
     images: galleryImages,
@@ -86,59 +79,28 @@ const PastEvents = () => {
     <div className="container mx-auto px-4 pt-2">
       <SectionTitle title="Eventos Pasados" />
       <ScrollableSection className="py-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {events.map((event) => (
+        <div className="flex gap-8 px-4">
+          {events.map((event, index) => (
             <motion.div
               key={event.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="group relative bg-gradient-to-br from-mantra-blue/40 to-black/60 rounded-xl overflow-hidden flex flex-col h-full"
+              transition={{ delay: index * 0.1 }}
+              className="cursor-pointer flex-shrink-0 w-[300px] md:w-[350px]"
             >
-              {/* Imagen principal del evento */}
-              <div className="aspect-video relative overflow-hidden">
-                <img
-                  src={event.imageUrl || "/default-event.jpg"}
-                  alt={event.title}
-                  className="w-full h-full object-cover transform transition-transform duration-500"
-                  style={{
-                    transform: "scale(1)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "scale(1.1)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "scale(1)";
-                  }}
-                />
-                <div
-                  className="absolute inset-0 bg-black transition-colors duration-300"
-                  style={{
-                    opacity: 0,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.opacity = "0.5";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.opacity = "0";
-                  }}
-                />
-              </div>
-
-              {/* Contenido del evento */}
-              <div className="p-6 flex flex-col flex-1">
-                <h3 className="text-2xl font-bold text-white mb-4">
-                  {event.title}
-                </h3>
-
-                {/* Espaciador flexible */}
-                <div className="flex-1"></div>
-
-                {/* Información y botones (fijados abajo) */}
-                <div className="mt-auto">
-                  <div className="space-y-3 text-gray-300 mb-6">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5 text-mantra-gold" />
-                      <span>
+              <div className="relative aspect-video mb-4">
+                <div className="absolute inset-0 rounded-xl overflow-hidden hover:scale-95 transition-transform duration-300">
+                  <LazyLoadImage
+                    src={event.imageUrl || "/default-event.jpg"}
+                    alt={event.title}
+                    className="w-full h-full object-cover"
+                    draggable="false"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="flex items-center gap-2 text-gray-300 mb-2">
+                      <Calendar className="w-4 h-4 text-mantra-gold" />
+                      <span className="text-sm">
                         {new Date(event.date).toLocaleDateString("es-ES", {
                           day: "numeric",
                           month: "long",
@@ -147,39 +109,36 @@ const PastEvents = () => {
                       </span>
                     </div>
                   </div>
-
-                  {/* Botones de acción */}
-                  <div className="flex gap-4">
-                    <button
-                      onClick={() => handleLineupOpen(event.id)}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold rounded-lg transition-colors"
-                    >
-                      <Users className="w-5 h-5" />
-                      Line-up
-                    </button>
-
-                    <button
-                      onClick={() => handleGalleryOpen(event)}
-                      className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold ${
-                        loadingGalleryId === event.id || isLoadingGallery
-                          ? "cursor-wait"
-                          : "cursor-pointer"
-                      }`}
-                      disabled={
-                        loadingGalleryId === event.id || isLoadingGallery
-                      }
-                    >
-                      {loadingGalleryId === event.id || isLoadingGallery ? (
-                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-mantra-gold" />
-                      ) : (
-                        <>
-                          <ImageIcon className="w-5 h-5" />
-                          Galería
-                        </>
-                      )}
-                    </button>
-                  </div>
                 </div>
+              </div>
+
+              <h3 className="text-lg font-medium text-white text-center mb-4">
+                {event.title}
+              </h3>
+
+              <div className="flex gap-4 justify-center">
+                <button
+                  onClick={() => handleLineupOpen(event.id)}
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold rounded-lg transition-colors"
+                >
+                  <Users className="w-4 h-4" />
+                  Line-up
+                </button>
+
+                <button
+                  onClick={() => handleGalleryOpen(event)}
+                  className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors bg-mantra-gold/10 hover:bg-mantra-gold/20 text-mantra-gold`}
+                  disabled={loadingGalleryId === event.id || isLoadingGallery}
+                >
+                  {loadingGalleryId === event.id || isLoadingGallery ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-mantra-gold" />
+                  ) : (
+                    <>
+                      <ImageIcon className="w-4 h-4" />
+                      Galería
+                    </>
+                  )}
+                </button>
               </div>
             </motion.div>
           ))}
@@ -195,8 +154,6 @@ const PastEvents = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            {/* Fondo con gradiente */}
-
             {/* Contenido del modal */}
             <div
               className="relative max-w-7xl w-full bg-gradient-to-b from-mantra-warmBlack to-black rounded-xl shadow-2xl flex flex-col max-h-[90vh]"
@@ -224,21 +181,12 @@ const PastEvents = () => {
                       className="relative group aspect-square"
                       onContextMenu={(e) => e.preventDefault()}
                     >
-                      {isSafari ? (
-                        <img
-                          src={image.thumbnail || "/placeholder.jpg"}
-                          alt="Evento"
-                          className="w-full h-full object-cover rounded-lg"
-                          draggable="false"
-                        />
-                      ) : (
-                        <img
-                          src={image.thumbnail || "/placeholder.jpg"}
-                          alt="Evento"
-                          className="w-full h-full object-cover rounded-lg"
-                          draggable="false"
-                        />
-                      )}
+                      <img
+                        src={image.thumbnail || "/placeholder.jpg"}
+                        alt="Evento"
+                        className="w-full h-full object-cover rounded-lg"
+                        draggable="false"
+                      />
                       <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
                         <span className="text-white text-sm">Vista previa</span>
                       </div>

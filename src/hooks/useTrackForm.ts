@@ -102,8 +102,16 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
     setStatus({ isLoading: true, success: {}, error: null });
 
     try {
+      // Trim all string values in formData
+      const trimmedFormData = {
+        ...formData,
+        title: formData.title.trim(),
+        beatportUrl: formData.beatportUrl?.trim() || null,
+        soundcloudUrl: formData.soundcloudUrl?.trim() || null,
+      };
+
       // Validaciones básicas
-      if (!formData.title || !formData.artistId) {
+      if (!trimmedFormData.title || !trimmedFormData.artistId) {
         throw new Error("Por favor completa todos los campos requeridos");
       }
 
@@ -117,7 +125,7 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
       const { data: artistData, error: artistError } = await supabase
         .from("artists")
         .select("nickname")
-        .eq("id", formData.artistId)
+        .eq("id", trimmedFormData.artistId)
         .single();
 
       if (artistError) throw artistError;
@@ -152,7 +160,7 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
       if (files.audio || files.artwork) {
         if (files.audio) {
           const audioExt = files.audio.name.split(".").pop();
-          const audioBaseName = formData.title
+          const audioBaseName = trimmedFormData.title
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-");
           audioFilename = `${audioBaseName}.${audioExt}`;
@@ -166,7 +174,7 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
 
         if (files.artwork) {
           const artworkExt = files.artwork.name.split(".").pop();
-          const artworkBaseName = `${formData.title
+          const artworkBaseName = `${trimmedFormData.title
             .toLowerCase()
             .replace(/[^a-z0-9]+/g, "-")}-icon`;
           artworkFilename = `${artworkBaseName}.${artworkExt}`;
@@ -182,17 +190,19 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
       }
 
       // Si cambió el artista, necesitamos mover los archivos
-      if (track && track.artistId !== formData.artistId) {
+      if (track && track.artistId !== trimmedFormData.artistId) {
         // Obtener información de ambos artistas
         const { data: artists, error: artistsError } = await supabase
           .from("artists")
           .select("id, nickname")
-          .in("id", [track.artistId, formData.artistId]);
+          .in("id", [track.artistId, trimmedFormData.artistId]);
 
         if (artistsError) throw artistsError;
 
         const oldArtist = artists.find((a) => a.id === track.artistId);
-        const newArtist = artists.find((a) => a.id === formData.artistId);
+        const newArtist = artists.find(
+          (a) => a.id === trimmedFormData.artistId
+        );
 
         if (oldArtist && newArtist) {
           const oldBasePath = `artist/${oldArtist.nickname}`;
@@ -221,7 +231,7 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
 
       // Actualizar o crear el track en la base de datos
       if (track?.id) {
-        if (formData.isFeatured) {
+        if (trimmedFormData.isFeatured) {
           const { error: updateErrorFeatured } = await supabase
             .from("tracks")
             .update({ is_featured: false })
@@ -233,12 +243,12 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
         const { error: updateError } = await supabase
           .from("tracks")
           .update({
-            title: formData.title,
-            artist_id: formData.artistId,
-            release_date: formData.releaseDate,
-            beatport_url: formData.beatportUrl,
-            is_featured: formData.isFeatured,
-            soundcloud_url: formData.soundcloudUrl,
+            title: trimmedFormData.title,
+            artist_id: trimmedFormData.artistId,
+            release_date: trimmedFormData.releaseDate,
+            beatport_url: trimmedFormData.beatportUrl,
+            is_featured: trimmedFormData.isFeatured,
+            soundcloud_url: trimmedFormData.soundcloudUrl,
             filename: audioFilename,
             filename_icon: artworkFilename,
           })
@@ -246,7 +256,7 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
 
         if (updateError) throw updateError;
       } else {
-        if (formData.isFeatured) {
+        if (trimmedFormData.isFeatured) {
           const { error: updateError } = await supabase
             .from("tracks")
             .update({ is_featured: false })
@@ -256,12 +266,12 @@ export function useTrackForm(track?: Track, onSuccess?: () => void) {
         }
 
         const { error: insertError } = await supabase.from("tracks").insert({
-          title: formData.title,
-          artist_id: formData.artistId,
-          release_date: formData.releaseDate,
-          beatport_url: formData.beatportUrl,
-          is_featured: formData.isFeatured,
-          soundcloud_url: formData.soundcloudUrl,
+          title: trimmedFormData.title,
+          artist_id: trimmedFormData.artistId,
+          release_date: trimmedFormData.releaseDate,
+          beatport_url: trimmedFormData.beatportUrl,
+          is_featured: trimmedFormData.isFeatured,
+          soundcloud_url: trimmedFormData.soundcloudUrl,
           filename: audioFilename!,
           filename_icon: artworkFilename || null,
         });

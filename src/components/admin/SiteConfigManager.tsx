@@ -67,7 +67,16 @@ const SiteConfigManager = () => {
     setError(null);
 
     try {
-      const updates = Object.entries(links).map(([key, value]) => ({
+      // Trim all values in links
+      const trimmedLinks = Object.entries(links).reduce(
+        (acc, [key, value]) => ({
+          ...acc,
+          [key]: value.trim(),
+        }),
+        {} as SocialLinks
+      );
+
+      const updates = Object.entries(trimmedLinks).map(([key, value]) => ({
         key,
         value,
       }));

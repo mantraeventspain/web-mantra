@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import type { Artist } from "../../types/artist.ts";
 import { SectionTitle } from "../ui/SectionTitle.tsx";
 import { ScrollableSection } from "../ui/ScrollableSection.tsx";
-
+import { LazyLoadImage } from "react-lazy-load-image-component";
 const ArtistShowcase = () => {
   const { artists, isLoading, error } = useArtists();
   const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
@@ -48,7 +48,7 @@ const ArtistShowcase = () => {
                 <div className="relative aspect-square mb-4">
                   <div className="absolute inset-0 rounded-xl overflow-hidden hover:scale-95 transition-transform duration-300">
                     {artist.avatarUrl ? (
-                      <img
+                      <LazyLoadImage
                         src={artist.avatarUrl}
                         alt={artist.nickname}
                         className="w-full h-full object-cover"

@@ -1,10 +1,4 @@
 import { useState } from "react";
-import { supabase } from "../lib/supabase";
-
-interface NewsletterResponse {
-  success?: boolean;
-  error?: string;
-}
 
 export function useNewsletter() {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,29 +9,24 @@ export function useNewsletter() {
     setError(null);
 
     try {
-      // 1. Guardar en Supabase
-      const { error: dbError } = await supabase
-        .from("newsletter_subscribers")
-        .insert([{ email }]);
+      const response = await fetch("https://api.brevo.com/v3/contacts", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "api-key": import.meta.env.VITE_BREVO_API_KEY,
+        },
+        body: JSON.stringify({
+          email,
+          listIds: [parseInt(import.meta.env.VITE_BREVO_LIST_ID)],
+          updateEnabled: true,
+        }),
+      });
 
-      if (dbError) throw dbError;
-
-      // 2. Enviar a Resend via Edge Function
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/newsletter-signup`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
-
-      const data: NewsletterResponse = await response.json();
-
-      if (!response.ok) throw new Error(data.error);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || "Error al procesar la suscripción");
+      }
 
       return true;
     } catch (e) {

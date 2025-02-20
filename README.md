@@ -1,1 +1,1 @@
-Deply
+Deploy

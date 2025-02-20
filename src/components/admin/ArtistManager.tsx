@@ -70,21 +70,19 @@ const ArtistManager = () => {
           <div className="flex rounded-lg overflow-hidden bg-black/20">
             <button
               onClick={() => setActiveTab("list")}
-              className={`px-4 py-2 ${
-                activeTab === "list"
+              className={`px-4 py-2 ${activeTab === "list"
                   ? "bg-mantra-gold text-black"
                   : "text-gray-300 hover:text-white"
-              }`}
+                }`}
             >
               Lista
             </button>
             <button
               onClick={() => setActiveTab("order")}
-              className={`px-4 py-2 ${
-                activeTab === "order"
+              className={`px-4 py-2 ${activeTab === "order"
                   ? "bg-mantra-gold text-black"
                   : "text-gray-300 hover:text-white"
-              }`}
+                }`}
             >
               Ordenar
             </button>
@@ -113,7 +111,7 @@ const ArtistManager = () => {
       </div>
 
       {activeTab === "list" ? (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto custom-scrollbar overflow-y-auto">
           <table className="w-full">
             <thead>
               <tr className="text-left border-b border-mantra-gold/20">
@@ -128,9 +126,8 @@ const ArtistManager = () => {
               {artists.map((artist) => (
                 <tr
                   key={artist.id}
-                  className={`border-b border-mantra-gold/10 ${
-                    !artist.is_active ? "opacity-60" : ""
-                  }`}
+                  className={`border-b border-mantra-gold/10 ${!artist.is_active ? "opacity-60" : ""
+                    }`}
                 >
                   <td className="px-4 py-4">
                     <div className="flex items-center gap-3">
@@ -165,11 +162,10 @@ const ArtistManager = () => {
                   </td>
                   <td className="px-4 py-4 text-gray-300">
                     <span
-                      className={`px-2 py-1 rounded text-sm ${
-                        artist.is_active
+                      className={`px-2 py-1 rounded text-sm ${artist.is_active
                           ? "bg-green-500/10 text-green-400"
                           : "bg-red-500/10 text-red-400"
-                      }`}
+                        }`}
                     >
                       {artist.is_active ? "Activo" : "Inactivo"}
                     </span>
@@ -208,11 +204,10 @@ const ArtistManager = () => {
                       <button
                         onClick={() => handleStatusChange(artist)}
                         disabled={isDeleting}
-                        className={`p-2 transition-colors ${
-                          artist.is_active
+                        className={`p-2 transition-colors ${artist.is_active
                             ? "text-gray-400 hover:text-red-500"
                             : "text-gray-400 hover:text-green-500"
-                        }`}
+                          }`}
                         title={artist.is_active ? "Dar de baja" : "Dar de alta"}
                       >
                         {artist.is_active ? (

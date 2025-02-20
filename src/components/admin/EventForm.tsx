@@ -41,7 +41,7 @@ function getFormattedTime(isoString: string | null): string {
 export const EventForm = ({ event, onSuccess, onCancel }: EventFormProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const { artists } = useArtists({
-    includeInactive: false,
+    includeInactive: true,
     orderBy: "nickname",
   });
   const {

@@ -74,7 +74,7 @@ export const Home = () => {
           </Suspense>
         </AnimatedSection>
 
-        <AnimatedSection delay={0.2}>
+        <AnimatedSection delay={0.2} className="mt-32">
           <div id="artistas">
             <Suspense fallback={<LoadingSection />}>
               <ArtistShowcase />

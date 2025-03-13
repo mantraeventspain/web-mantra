@@ -156,7 +156,8 @@ const PastEvents = () => {
           >
             {/* Contenido del modal */}
             <div
-              className="relative max-w-7xl w-full bg-gradient-to-b from-mantra-warmBlack to-black rounded-xl shadow-2xl flex flex-col max-h-[90vh]"
+              className="relative max-w-7xl w-full bg-gradient-to-b from-mantra-warmBlack to-black rounded-xl shadow-2xl flex flex-col"
+              style={{ height: "calc(100vh - 8rem)" }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header fijo */}
@@ -229,7 +230,7 @@ const PastEvents = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
             onClick={() => setSelectedLineupEventId(null)}
             role="dialog"
             aria-modal="true"
@@ -238,17 +239,18 @@ const PastEvents = () => {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="relative max-w-7xl w-full bg-gradient-to-b from-mantra-warmBlack to-black rounded-xl shadow-2xl flex flex-col max-h-[90vh]"
+              className="relative max-w-7xl w-full bg-gradient-to-b from-mantra-warmBlack to-black rounded-xl shadow-2xl flex flex-col"
+              style={{ height: "calc(100vh - 8rem)" }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header fijo */}
-              <div className="sticky top-0 z-10 flex justify-between items-center p-6 border-b border-mantra-gold/10 bg-mantra-darkBlue rounded-t-xl">
+              <div className="sticky top-0 z-10 flex justify-between items-center p-6 border-b border-mantra-gold/10 bg-mantra-blue/30 backdrop-blur-md rounded-t-xl">
                 <h3 className="text-xl font-bold text-white">
                   Line-up del Evento
                 </h3>
                 <button
                   onClick={() => setSelectedLineupEventId(null)}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-white/70 hover:text-mantra-gold transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>

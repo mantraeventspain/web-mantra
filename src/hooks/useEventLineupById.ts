@@ -40,18 +40,31 @@ export function useEventLineupById(eventId: string | null) {
           if (eventError) throw eventError;
           event = eventData;
         } else {
-          // Si no hay eventId, obtener el próximo evento
+          // Si no hay eventId, intentar obtener el próximo evento
           const today = new Date().toISOString();
-          const { data: eventData, error: eventError } = await supabase
+          const { data: futureEvents, error: futureError } = await supabase
             .from("events")
             .select("*")
             .gte("date", today)
             .order("date", { ascending: true })
             .limit(1);
 
-          if (eventError) throw eventError;
-          // Tomamos el primer evento si existe
-          event = eventData?.[0] || null;
+          if (futureError) throw futureError;
+
+          if (!futureEvents?.length) {
+            // Si no hay eventos futuros, obtener el último evento pasado
+            const { data: pastEvents, error: pastError } = await supabase
+              .from("events")
+              .select("*")
+              .lt("date", today)
+              .order("date", { ascending: false })
+              .limit(1);
+
+            if (pastError) throw pastError;
+            event = pastEvents?.[0] || null;
+          } else {
+            event = futureEvents[0];
+          }
         }
 
         if (!event) {

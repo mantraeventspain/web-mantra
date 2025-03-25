@@ -5,7 +5,7 @@ import type { Artist } from "../types/artist";
 
 export function useArtists({
   includeInactive = false,
-  orderBy = "nickname",
+  orderBy = "display_order",
 }: {
   includeInactive?: boolean;
   orderBy?: "nickname" | "display_order";

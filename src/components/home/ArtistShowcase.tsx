@@ -7,9 +7,7 @@ import { SectionTitle } from "../ui/SectionTitle.tsx";
 import { ScrollableSection } from "../ui/ScrollableSection.tsx";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 const ArtistShowcase = () => {
-  const { artists, isLoading, error } = useArtists({
-    orderBy: "display_order",
-  });
+  const { artists, isLoading, error } = useArtists();
   const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
 
   if (isLoading) {

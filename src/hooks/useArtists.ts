@@ -17,7 +17,7 @@ export function useArtists({
   const fetchArtists = useCallback(
     async ({
       includeInactive = false,
-      orderBy = "nickname",
+      orderBy = "display_order",
     }: {
       includeInactive?: boolean;
       orderBy?: "nickname" | "display_order";

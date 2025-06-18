@@ -42,15 +42,6 @@ export const FutureEventLineups = () => {
             {/* Decoración visual */}
             <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-mantra-gold to-transparent"></div>
 
-            {/* Badge de destacado */}
-            {eventLineup.event.is_featured && (
-              <div className="absolute -top-12 left-1/2 -translate-x-1/2">
-                <span className="bg-gradient-to-r from-mantra-gold to-yellow-500 text-black px-6 py-2 rounded-full text-sm font-bold tracking-wider uppercase shadow-lg">
-                  ✨ Evento Destacado
-                </span>
-              </div>
-            )}
-
             <h2 className="text-4xl md:text-5xl font-bold text-mantra-gold mb-4 tracking-tight">
               {eventLineup.event.title}
             </h2>

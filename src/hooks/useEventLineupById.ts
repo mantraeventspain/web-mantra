@@ -40,30 +40,44 @@ export function useEventLineupById(eventId: string | null) {
           if (eventError) throw eventError;
           event = eventData;
         } else {
-          // Si no hay eventId, intentar obtener el próximo evento
-          const today = new Date().toISOString();
-          const { data: futureEvents, error: futureError } = await supabase
+          // Si no hay eventId, primero buscar si hay un evento destacado
+          const { data: featuredEvents, error: featuredError } = await supabase
             .from("events")
             .select("*")
-            .gte("date", today)
-            .order("date", { ascending: true })
+            .eq("is_featured", true)
             .limit(1);
 
-          if (futureError) throw futureError;
+          if (featuredError) throw featuredError;
 
-          if (!futureEvents?.length) {
-            // Si no hay eventos futuros, obtener el último evento pasado
-            const { data: pastEvents, error: pastError } = await supabase
+          if (featuredEvents?.length > 0) {
+            // Si hay un evento destacado, usarlo
+            event = featuredEvents[0];
+          } else {
+            // Si no hay evento destacado, buscar el próximo evento por fecha
+            const today = new Date().toISOString();
+            const { data: futureEvents, error: futureError } = await supabase
               .from("events")
               .select("*")
-              .lt("date", today)
-              .order("date", { ascending: false })
+              .gte("date", today)
+              .order("date", { ascending: true })
               .limit(1);
 
-            if (pastError) throw pastError;
-            event = pastEvents?.[0] || null;
-          } else {
-            event = futureEvents[0];
+            if (futureError) throw futureError;
+
+            if (!futureEvents?.length) {
+              // Si no hay eventos futuros, obtener el último evento pasado
+              const { data: pastEvents, error: pastError } = await supabase
+                .from("events")
+                .select("*")
+                .lt("date", today)
+                .order("date", { ascending: false })
+                .limit(1);
+
+              if (pastError) throw pastError;
+              event = pastEvents?.[0] || null;
+            } else {
+              event = futureEvents[0];
+            }
           }
         }
 
@@ -111,6 +125,7 @@ export function useEventLineupById(eventId: string | null) {
                 date: event.date,
                 location: event.location,
                 imageUrl: event.image_url || "",
+                is_featured: event.is_featured || false,
               }
             : null,
           lineup: lineupWithUrls as LineupArtist[],

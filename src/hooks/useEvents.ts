@@ -36,6 +36,7 @@ export function useEvents() {
             date: event.date,
             location: event.location,
             imageUrl,
+            is_featured: event.is_featured || false,
           };
         })
       );

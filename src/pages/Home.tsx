@@ -1,8 +1,9 @@
 import { lazy, Suspense } from "react";
 import { AnimatedSection } from "../components/home/AnimatedSection";
-import { EventLineup } from "../components/events/EventLineup";
+// import { EventLineup } from "../components/events/EventLineup";
 import { usePublicUrl } from "../hooks/useSupabase";
 import { FloatingTicketButton } from "../components/layout/FloatingTicketButton";
+import { FutureEventLineups } from "../components/events/FutureEventLineups";
 
 // Lazy load components
 
@@ -56,7 +57,7 @@ export const Home = () => {
         {/* Secciones animadas */}
         <AnimatedSection delay={0.2}>
           <div id="lineup">
-            <EventLineup />
+            <FutureEventLineups />
           </div>
         </AnimatedSection>
 

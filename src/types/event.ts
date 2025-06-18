@@ -5,6 +5,7 @@ export interface Event {
   date: string;
   location: string;
   imageUrl: string | null;
+  is_featured?: boolean;
 }
 
 export interface LineupArtist {

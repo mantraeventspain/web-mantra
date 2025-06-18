@@ -177,6 +177,32 @@ export const EventForm = ({ event, onSuccess, onCancel }: EventFormProps) => {
                   className="w-full px-4 py-2 bg-black/30 border border-mantra-gold/20 rounded-lg text-white"
                 />
               </div>
+
+              <div className="md:col-span-2">
+                <div className="flex items-center space-x-3 p-4 bg-black/20 border border-mantra-gold/20 rounded-lg">
+                  <input
+                    type="checkbox"
+                    id="is_featured"
+                    checked={formData.is_featured}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        is_featured: e.target.checked,
+                      }))
+                    }
+                    className="h-5 w-5 text-mantra-gold bg-black/30 border-mantra-gold/30 rounded focus:ring-mantra-gold focus:ring-2"
+                  />
+                  <label
+                    htmlFor="is_featured"
+                    className="text-sm font-medium text-gray-300 cursor-pointer"
+                  >
+                    ⭐ Destacar este evento
+                  </label>
+                  <span className="text-xs text-gray-500">
+                    (Solo puede haber un evento destacado a la vez)
+                  </span>
+                </div>
+              </div>
             </div>
 
             <div className="border-t border-mantra-gold/20 pt-6">

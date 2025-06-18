@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
-import type { Event } from "../types";
+import type { Event } from "../types/event";
 // import type { Database } from "../types/database.types";
 import type { Artist } from "../types/artist";
 import { uploadEventImage } from "../utils/eventHelpers";
@@ -28,6 +28,7 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
     description: event?.description || "",
     date: event?.date ? formatDateForInput(event.date) : "",
     location: event?.location || "",
+    is_featured: event?.is_featured || false,
   });
 
   const [lineup, setLineup] = useState<LineupArtist[]>([]);
@@ -126,6 +127,7 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
             description: trimmedFormData.description,
             date: trimmedFormData.date,
             location: trimmedFormData.location,
+            is_featured: trimmedFormData.is_featured,
           })
           .eq("id", event.id);
 
@@ -139,6 +141,7 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
             description: trimmedFormData.description,
             date: trimmedFormData.date,
             location: trimmedFormData.location,
+            is_featured: trimmedFormData.is_featured,
           })
           .select()
           .single();
@@ -202,16 +205,19 @@ export function useEventForm(event?: Event, onSuccess?: () => void) {
         success: {
           data: dataSuccess,
           image: imageSuccess,
+          lineup: true,
         },
         error: null,
       });
 
-      if (onSuccess) onSuccess();
+      if (onSuccess) {
+        setTimeout(onSuccess, 1000);
+      }
     } catch (e) {
       setStatus({
         isLoading: false,
         success: {},
-        error: e instanceof Error ? e.message : "Error al guardar el evento",
+        error: e instanceof Error ? e.message : "Error desconocido",
       });
     }
   };
